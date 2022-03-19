@@ -1,0 +1,127 @@
+{% extends 'layout.html' %}
+
+<!-- Home Page -->
+{% block head %}
+<title>Home</title>
+{% endblock %}
+
+{% block content %}
+<div class="home">
+
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://i0.wp.com/myvegetarianroots.com/wp-content/uploads/2020/03/DSC_0215.jpeg?fit=1920%2C1285&ssl=1" class="d-block w-100" alt="Image1">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Food 1</h5>
+              <p>Description 1</p>
+            </div>      
+          </div>
+          <div class="carousel-item">
+            <img src="https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F9%2F2019%2F09%2Fdessert-cities-FT-BLOG0919.jpg" class="d-block w-100" alt="Image2">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Food 2</h5>
+              <p>Description 2</p>
+            </div>      
+           </div>
+        </div>
+
+        <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+        <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+    </div> 
+
+    <div id="explore">
+        <h3>MOST POPULAR DISHES</h3>
+    </div>
+
+    <div id="cards" class="container">
+        <div class="row gy-4">
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card1img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 1</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card2img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 2</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card3img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 3</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="explore">
+        <h3>HIGHEST-RATED DISHES</h3>
+    </div>
+
+    <div id="cards" class="container">
+        <div class="row gy-4">
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card1img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 1</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card2img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 2</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card h-100">
+                    <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E=" class="card-img-top" alt="card3img">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Dish 3</h5>
+                        <p class="card-text">Description and Price</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <figure class="quote">
+        <blockquote>
+          "It was amazing! I loved it."
+        </blockquote>
+        <figcaption>
+          &mdash; Customer Review, <cite>Year</cite>  
+        </figcaption>
+    </figure>
+
+</div>
+{% endblock %}

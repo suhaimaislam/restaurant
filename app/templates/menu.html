@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+<!-- Menu Page -->
+{% block head %}
+<title>Menu</title>
+{% endblock %}
+
+{% block content %}
+<div id="menu">
+    <h3 id="menu-header">MENU</h3>
+
+    <section class="menu-container">
+        <div id="breakfast">
+          <h4 id="breakfast-header">Breakfast</h4>
+          
+          {% for menu in menus %}
+          <div class="menu-item">
+            <h5>{{ menu.name }}</h5>
+            <h6>PRICE: {{ menu.price }}</h6>
+            <h6>RATING: {{ menu.rating }}</h6>
+            <h6>DESCRIPTION: {{ menu.description }}</h6>
+          </div>
+          {% endfor %}
+        </div>
+        <div id="lunch">
+          <h4 id="lunch-header">Lunch</h4>
+        </div>
+        <div id="dinner">
+            <h4 id="dinner-header">Dinner</h4>
+          </div>
+        </section>
+</div>
+{% endblock %}
