@@ -10,7 +10,7 @@ python3 -m venv env
 source env/bin/activate
 ```
 4. Install the requirements: `pip install -r requirements.txt`
-5. If you haven't done so already, create a database named `twitterish`
+5. If you haven't done so already, create a database named `restaurant`
 6. Run `python app/db.py` as needed to create and seed your database tables
 7. Run the application as needed: `python app/app.py`
 <br>
