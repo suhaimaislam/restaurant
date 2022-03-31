@@ -18,8 +18,8 @@ source env/bin/activate
 ### 🖥 Set up your own personal branch
 1. Create and checkout a personal branch: `git checkout -b restaurant-<your name>`
 2. Push up your personal branch: `git push origin restaurant-<your name>`
-3. Make any changes and push it up to your feature branch:
+3. Make any changes and push it up to your branch:
 ```
 git add -A
 git commit -m "<commit message>"
-git push origin <your name>-<feature name>
+git push origin restaurant-<your name>
