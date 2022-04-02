@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+<!-- Discussion Page -->
+{% block head %}
+<title>Discussion</title>
+{% endblock %}
+
+{% block content %}
+<section class="reviews_container">
+    <div id="food_reviews centered">
+        <h2>Food Reviews</h2>
+        {% for review in food_reviews %}
+            <div id="review_item">
+                <h5>{{ review.title }}</h5>
+                <p>{{ review.date_posted }}</p>
+                <p>{{ review.content }}</p>
+            </div>
+            <hr style="width:50%;text-align:left;margin-left:0">
+        {% endfor %}
+      <p>We want to hear from you!</p> <a href="/discussion/new">Write A Menu Dish Review</a>
+    </div>
+    <div id="employee_reviews centered">
+        <h2>Employee Reviews</h2>
+        <p>Some text here too.</p>
+    </div>
+{% endblock content %}
