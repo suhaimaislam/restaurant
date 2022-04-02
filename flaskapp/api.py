@@ -149,12 +149,12 @@ def menu():
     return render_template('menu.html', menus=menus)
 
 @app.route("/discussion", methods=['GET'])
-@login_required
 def discussion():
     food_reviews = FoodReview.query.all()
     return render_template('discussion.html', food_reviews=food_reviews)
 
 @app.route("/discussion/new", methods=['GET', 'POST'])
+@login_required
 def new_discussion():
     form = FoodReviewForm()
     if form.validate_on_submit():
