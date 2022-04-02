@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+<!-- Profile Page -->
+{% block head %}
+<title>Profile</title>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ current_user.username }}</h1>
+{% endblock content %}
