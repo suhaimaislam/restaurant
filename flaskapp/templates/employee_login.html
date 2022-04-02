@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 
-<!-- Login Page -->
+<!-- Employee Login Page -->
 {% block head %}
-<title>Login</title>
+<title>Employee Login</title>
 {% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Log In</legend>
+                <legend class="border-bottom mb-4">Employee Portal Log In</legend>
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
                     {% if form.email.errors %}
@@ -49,15 +49,5 @@
                 <a href="#">Forgot Password?</a>
             </small>
         </form>
-    </div>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Need An Account? <a class="ml-2" href="{{ url_for('signup') }}">Sign Up Now</a>
-        </small>
-    </div>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Are You An Employee? <a class="ml-2" href="{{ url_for('employee_login') }}">Login via Employee Portal</a>
-        </small>
     </div>
 {% endblock content %}

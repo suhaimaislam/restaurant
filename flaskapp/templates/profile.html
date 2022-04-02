@@ -6,5 +6,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ current_user.username }}</h1>
+    <h1>Welcome {{ user.username }}</h1>
+
+    <p>Status: {{ user.status }} Customer</p>
+    <p>Deposit: ${{ user.deposit }}</p>
+    <small>Not enough money on your account?</small> <a href="{{ url_for('deposit_money') }}">Deposit Money</a>
+    {% if user.address %}
+      <p>Address: {{ user.address }}</p>
+      <small>Need to change your address?</small> <a href="{{ url_for('update_address') }}">Update Address</a>
+      {% endif %}
 {% endblock content %}

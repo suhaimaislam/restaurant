@@ -135,27 +135,6 @@
 }
 
 /* Login */
-/* .login-signup {
-    display: flex;
-}
-  
-#signup {
-    flex: 1;
-    text-align: center;
-    padding-top: 50px;
-}
-  
-#login {
-    flex: 1;
-    text-align: center;
-    padding-top: 50px;
-}
-
-.vl {
-    padding-top: 25px;
-    border-left: 6px solid #BCB88A;
-    height: 500px;
-} */
 
 .content-section {
     background: #ffffff;
@@ -205,4 +184,8 @@
     margin-right: auto;
     padding: 2px 16px; 
     text-align: center;
+}
+
+#review_item {
+    padding: 25px 25px 25px 25px;
 }
