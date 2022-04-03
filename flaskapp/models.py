@@ -1,11 +1,14 @@
 from flaskapp import db, login_manager
 from datetime import datetime
 from flask_login import UserMixin
-from sqlalchemy.sql.schema import ForeignKey
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# @login_manager.user_loader
+# def load_customer(customer_id):
+#     return Customer.query.get(int(customer_id))
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +39,7 @@ class Customer(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(30), default="Registered")
     deposit = db.Column(db.Float, default=0.0)
+    foodreviews = db.relationship('FoodReview', back_populates='author', lazy='dynamic')
 
     def __repr__(self):
         return f'Employee({self.username}, {self.email}, {self.status}, {self.deposit})'
@@ -49,7 +53,7 @@ class Menu(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50))
-    # category
+    reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
     # image
     
     def serialize(self):
@@ -58,7 +62,7 @@ class Menu(db.Model):
             "name": self.name,
             "price": self.price,
             "description": self.description,
-            "ratings": self.ratings
+            "category": self.category
         }
 
 class FoodReview(db.Model):
@@ -68,6 +72,13 @@ class FoodReview(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
+    
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    author = db.relationship('Customer', back_populates='foodreviews')
 
-    # def __repr__(self):
-    #     return f'FoodReview({self.menu}, {self.customer})'
+    menu_id = db.Column(db.Integer, db.ForeignKey('menus.id'), nullable=False)
+    dish = db.relationship('Menu', back_populates='reviews')
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+    

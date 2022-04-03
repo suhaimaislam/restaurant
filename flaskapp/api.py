@@ -4,37 +4,6 @@ from flaskapp.forms import FoodReviewForm, RegistrationForm, LoginForm, AddressF
 from flaskapp.models import FoodReview, User, Customer, Employee, Menu
 from flask_login import login_user, current_user, logout_user, login_required
 
-menus = [
-    {
-        'name': 'Chocolate Chip Waffles',
-        'price': '8.5',
-        'description': 'Dough-based, caramelized waffle topped with vanilla bean ice-cream',
-        'category': 'breakfast',
-        'rating': '4.3'
-    },
-    {
-        'name': 'Avocado Toast',
-        'price': '9',
-        'description': 'Sourbread Dough, Tomato, Microgreens',
-        'category': 'breakfast',
-        'rating': '4.0'
-    },
-    {
-        'name': 'Peri Peri Chicken Burger',
-        'price': '12',
-        'description': 'chicken infused with hot chili peppers, jalapenos, lemon, vinegar, herbs, and spices',
-        'category': 'lunch',
-        'rating': '4.6'
-    },
-    {
-        'name': 'Fettuccine Alfredo',
-        'price': '15',
-        'description': 'fresh fettuccine tossed with butter and Parmesan cheese',
-        'category': 'dinner',
-        'rating': '4.5'
-    }
-]
-
 @app.route('/', methods=['GET'])
 @app.route("/home")
 def home():
@@ -146,7 +115,9 @@ def deposit_money():
 
 @app.route('/menu', methods=['GET'])
 def menu():
-    return render_template('menu.html', menus=menus)
+    menudata=Menu.query.all()
+    all_dishes = [item.serialize() for item in menudata]
+    return render_template('menu.html', menus=all_dishes)
 
 @app.route("/discussion", methods=['GET'])
 def discussion():
@@ -156,10 +127,13 @@ def discussion():
 @app.route("/discussion/new", methods=['GET', 'POST'])
 @login_required
 def new_discussion():
+    menudata=Menu.query.all()
+    menu_list=[(item.id, item.name) for item in menudata]
     form = FoodReviewForm()
+    form.dish.choices=menu_list
     if form.validate_on_submit():
-        review = FoodReview(title=form.title.data, content=form.content.data)
-        db.session.add(review)
+        foodreviews = FoodReview(title=form.title.data, content=form.content.data, menu_id=form.dish.data, customer_id=current_user.id)
+        db.session.add(foodreviews)
         db.session.commit()
         flash('Your review has been created!', 'success')
         return redirect(url_for('discussion'))

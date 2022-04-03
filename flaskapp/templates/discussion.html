@@ -12,8 +12,10 @@
         {% for review in food_reviews %}
             <div id="review_item">
                 <h5>{{ review.title }}</h5>
-                <p>{{ review.date_posted }}</p>
-                <p>{{ review.content }}</p>
+                <h6>Dish: {{ review.dish.name }}</h6>
+                <p>Author: {{ review.author.username }}</p>
+                <p>Date: {{ review.date_posted }}</p>
+                <p>Review: {{ review.content }}</p>
             </div>
             <hr style="width:50%;text-align:left;margin-left:0">
         {% endfor %}
