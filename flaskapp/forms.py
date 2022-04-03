@@ -1,6 +1,6 @@
 from tokenize import String
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FloatField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FloatField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flaskapp.models import User
 
@@ -52,5 +52,6 @@ class DepositForm(FlaskForm):
 
 class FoodReviewForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
+    dish = SelectField('Dish', coerce=int, validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
