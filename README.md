@@ -10,8 +10,7 @@ python3 -m venv env
 source env/bin/activate
 ```
 4. Install the requirements: `pip install -r requirements.txt`
-5. If you haven't done so already, create a database named `restaurant`
-6. Run the application as needed: `python app.py`
+5. Run the application as needed: `python app.py`
 <br>
 
 ### 🖥 Set up your own personal branch
