@@ -2,7 +2,7 @@
 
 ### 🖥 Install this project locally
 1. Clone this repo: `git clone <this repo's remote url>`
-2. Change directories: `cd gateway_project`
+2. Change directories: `cd restaurant`
 3. Create a virtual environment for this project and activate it:
 ```
 mkdir env
