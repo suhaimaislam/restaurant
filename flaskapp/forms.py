@@ -15,7 +15,7 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     street = StringField('Mailing Address', validators=[DataRequired()])
-    apt = IntegerField('Apt/Suite/Floor', validators=[DataRequired()])
+    apt = StringField('Apt/Suite/Floor', validators=[DataRequired()]) # <-- changed to StringField
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = IntegerField('Zipcode', validators=[DataRequired()])
@@ -41,7 +41,7 @@ class LoginForm(FlaskForm):
 
 class AddressForm(FlaskForm):
     street = StringField('Mailing Address', validators=[DataRequired()])
-    apt = IntegerField('Apt/Suite/Floor', validators=[DataRequired()])
+    apt = StringField('Apt/Suite/Floor', validators=[DataRequired()]) # <-- changed to StringField
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = IntegerField('Zipcode', validators=[DataRequired()])
