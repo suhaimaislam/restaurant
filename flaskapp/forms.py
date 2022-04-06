@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Integ
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flaskapp.models import User
 
+# structure for user form submissions 
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
