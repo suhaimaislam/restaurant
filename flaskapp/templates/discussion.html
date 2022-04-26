@@ -13,8 +13,8 @@
             <div id="review_item">
                 <h5>{{ review.title }}</h5>
                 <h6>Dish: {{ review.dish.name }}</h6>
-                <p>By: {{ review.author.username }}</p>
-                <p>Date: {{ review.date_posted }}</p>
+                <p>Author: {{ review.author.username }}</p>
+                <p>Date: {{ review.date_posted.strftime('%m-%d-%Y | %I:%M:%S %p') }}</p> <!--date format changed-->
                 <p>Review: {{ review.content }}</p>
             </div>
             <hr style="width:50%;text-align:left;margin-left:0">

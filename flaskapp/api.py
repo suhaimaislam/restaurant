@@ -47,7 +47,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('login')) 
     return render_template('signup.html', title='Signup', form=form)
 
 # login page for customers
@@ -126,8 +126,8 @@ def update_address():
             new_address = form.street.data + " " + str(form.apt.data) + " " + form.city.data + " " + form.state.data + " " + str(form.zipcode.data)
             current_user.address = new_address
             db.session.commit()
-            flash('Your address has been updated!', 'success')
-            return redirect(url_for('profile'))
+            flash('Your address has been updated!', 'success') 
+            ##return redirect(url_for('profile')) #cancelling redirection to see flash confirm message
     return render_template('update_address.html', title='Update Address', form=form)
 
 # deposit money page for customers
@@ -142,7 +142,7 @@ def deposit_money():
             user.deposit = new_deposit
             db.session.commit()
             flash('Your deposit amount has been updated!', 'success')
-            return redirect(url_for('profile'))
+            ##return redirect(url_for('profile')) #cancelling redirection to see flash confirm message
     return render_template('deposit_money.html', title='Add Deposit', form=form)
 
 # menu page for customers
