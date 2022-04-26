@@ -189,3 +189,12 @@
 #review_item {
     padding: 25px 25px 25px 25px;
 }
+
+/* warning header */
+.header {
+    padding: 20px;
+    text-align: center;
+    background: #BCB88A;
+    color: white;
+    font-size: 15px;
+  }

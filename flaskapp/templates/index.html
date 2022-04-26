@@ -8,6 +8,13 @@
 {% block content %}
 <div class="home">
 
+    {% if warnings is defined and warnings.count() > 0%}
+    <div class="header">
+        <p>Warning on Account</p>
+        <a href="/profile">Click to See Details</a>
+    </div>
+    {% endif %}
+
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active">

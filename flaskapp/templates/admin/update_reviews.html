@@ -1,0 +1,35 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+    <h2>Compliments and Complaints</h2>
+    <div id="review_item">
+        <p>By: {{ complaint.filer.username }}</p>
+        <p>About: {{ complaint.complainee.username }}</p>
+        <p>Date: {{ complaint.date_filed }}</p>
+        <p>Review: {{ complaint.content }}</p>
+    </div>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ form.status.label(class="form-control-label") }}
+
+                {% if form.status.errors %}
+                    {{ form.status(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.status.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.status(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    </div>
+{% endblock %}
