@@ -6,13 +6,28 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Welcome {{ user.username }}</h1>
 
-    <p>Status: {{ user.status }} Customer</p>
-    <p>Deposit: ${{ user.deposit }}</p>
-    <small>Not enough money on your account?</small> <a href="{{ url_for('deposit_money') }}">Deposit Money</a>
-    {% if user.address %}
-      <p>Address: {{ user.address }}</p>
-      <small>Need to change your address?</small> <a href="{{ url_for('update_address') }}">Update Address</a>
+    <div class="content-section">
+      <h1>Welcome {{ user.username }}</h1>
+
+      <p>Status: {{ user.status }} Customer</p>
+      <p>Deposit: ${{ user.deposit }}</p>
+      <small>Not enough money on your account?</small> <a href="{{ url_for('deposit_money') }}">Deposit Money</a>
+      {% if user.address %}
+        <p>Address: {{ user.address }}</p>
+        <small>Need to change your address?</small> <a href="{{ url_for('update_address') }}">Update Address</a>
       {% endif %}
+
+      <hr>
+      
+      <h3>Customer Warnings</h3>
+      {% if warnings is defined and warnings.count() > 0%}
+        {% for warning in warnings %}
+            <div class="warning-item">
+              <h6>Date: {{ warning.date_received }}</h5>
+              <h6>Warning: {{ warning.content }}</h6>
+            </div>
+        {% endfor %}
+      {% endif %}
+    </div>
 {% endblock content %}

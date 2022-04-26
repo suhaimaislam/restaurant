@@ -13,16 +13,26 @@
             <div id="review_item">
                 <h5>{{ review.title }}</h5>
                 <h6>Dish: {{ review.dish.name }}</h6>
-                <p>Author: {{ review.author.username }}</p>
+                <p>By: {{ review.author.username }}</p>
                 <p>Date: {{ review.date_posted }}</p>
                 <p>Review: {{ review.content }}</p>
             </div>
             <hr style="width:50%;text-align:left;margin-left:0">
         {% endfor %}
-      <p>We want to hear from you!</p> <a href="/discussion/new">Write A Menu Dish Review</a>
+      <p>We want to hear from you!</p> <a href="/discussion/new_food_review">Write A Menu Dish Review</a>
     </div>
+    <hr>
     <div id="employee_reviews centered">
         <h2>Employee Reviews</h2>
-        <p>Some text here too.</p>
+        {% for complaint in complaints %}
+            <div id="complaint_item">
+                <h5>About: {{ complaint.complainee.username }}</h5>
+                <h6>By: {{ complaint.filer.username }}</h6>
+                <p>Date: {{ complaint.date_filed }}</p>
+                <p>{{ complaint.content }}</p>
+            </div>
+            <hr style="width:50%;text-align:left;margin-left:0">
+        {% endfor %}
+        <p>We value your feedback!</p> <a href="/discussion/new_employee_review">Write An Employee Compliment/Complaint</a>
     </div>
 {% endblock content %}
