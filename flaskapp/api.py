@@ -5,6 +5,7 @@ from flaskapp.forms import *
 from flaskapp.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 from functools import wraps
+from sqlalchemy import desc, func
 
 def require_role(role):
     """make sure user has this role"""
@@ -24,9 +25,11 @@ def require_role(role):
 def home():
     if current_user.is_authenticated:
         warnings = Warning.query.filter_by(user_id=current_user.id)
-        return render_template('index.html', warnings=warnings)
+        highest_rated = Menu.query.order_by(desc(Menu.rating)).limit(3)
+        return render_template('index.html', warnings=warnings, highest_rated=highest_rated)
     else:
-        return render_template('index.html')
+        top_dishes = Menu.query.order_by(func.random()).limit(3)
+        return render_template('index.html', top_dishes=top_dishes)
 
 # home page for employees
 @app.route('/admin', methods=['GET'])
@@ -42,7 +45,8 @@ def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        address = form.street.data + " " + str(form.apt.data) + " " + form.city.data + " " + form.state.data + " " + str(form.zipcode.data)
+        address = form.street.data + " " + str(form.apt.data) + " " + form.city.data + " " \
+            + form.state.data + " " + str(form.zipcode.data)
         user = Customer(username=form.username.data, email=form.email.data, password=hashed_password, address=address)
         db.session.add(user)
         db.session.commit()
@@ -92,28 +96,31 @@ def logout():
 def profile():
     if current_user.is_authenticated:
         warnings = Warning.query.filter_by(user_id=current_user.id)
+        orders = Order.query.filter_by(customer_id=current_user.id)
     if current_user.is_authenticated and current_user.type=="customer":
         user = Customer.query.filter_by(id=current_user.id).first()
         status = user.status
         deposit = user.deposit
         address = user.address
 
-        return render_template('profile.html', 
+        return render_template('profile.html',
                                 user=user, 
                                 status=status,
                                 deposit=deposit,
                                 address=address,
-                                warnings=warnings)
+                                warnings=warnings,
+                                orders=orders)
     elif current_user.is_authenticated and current_user.type=="employee":
         user = Employee.query.filter_by(id=current_user.id).first()
         position = user.position
         salary = user.salary
 
-        return render_template('admin/profile.html', 
+        return render_template('admin/profile.html',
                                 user=user, 
                                 position=position,
                                 salary=salary,
-                                warnings=warnings)
+                                warnings=warnings, 
+                                orders=orders)
 
 # update address page for customers
 @app.route('/update_address', methods=['GET', 'POST'])
@@ -145,12 +152,81 @@ def deposit_money():
             ##return redirect(url_for('profile')) #cancelling redirection to see flash confirm message
     return render_template('deposit_money.html', title='Add Deposit', form=form)
 
+# cart page for customers
+@app.route('/cart', methods=['GET', 'POST'])
+def cart():
+    if current_user.is_authenticated:
+        curr = Customer.query.get(current_user.id)
+        
+        cart = curr.dishes
+        subtotal = 0
+        for item in cart: # calculate total of cart
+            subtotal += item.price
+
+        form=PlaceOrder()
+        if form.validate_on_submit():
+            if subtotal < curr.deposit: # places order if order total < customer account deposit
+
+                if curr.status == 'VIP': # 5% discount if customer is VIP
+                    subtotal *= 0.95
+
+                new_order = Order(total=subtotal, dishes=cart, customer_id=current_user.id)
+                curr.deposit -= subtotal
+                curr.dishes = []
+                db.session.add(new_order)
+                db.session.commit()
+
+                history = 0 # calculate total money spent by customer on all orders
+                for order in curr.orders:
+                    history += order.total
+                
+                outstanding = True # check if customer has outstanding complaints
+                for complaint in Complaint.query.filter_by(complainee_id=current_user.id):
+                    if complaint.type == 'complaint' and complaint.status != 'open':
+                        outstanding = False
+                    elif complaint.type == 'complaint' and complaint.status == 'open':
+                        outstanding = True
+                for complaint in Complaint.query.filter_by(filer_id=current_user.id):
+                    if complaint.type == 'complaint' and complaint.status != 'open':
+                        outstanding = False
+                    elif complaint.type == 'complaint' and complaint.status == 'open':
+                        outstanding = True
+                
+                # makes customer status a VIP if customer has placed more than 5 orders
+                # and either spent more than $100 or has no outstanding complaints
+                if len(curr.orders) > 5 and (history > 100 or outstanding is False):
+                    curr.status = "VIP"
+                
+                db.session.commit()
+                return redirect(url_for('home')) 
+
+            elif subtotal > curr.deposit: # issues warning and does not order if order total > customer account deposit
+                new_warning = Warning(content="Order total exceed account deposit", user_id=current_user.id)
+                db.session.add(new_warning)
+                db.session.commit()
+                return redirect(url_for('profile')) 
+        return render_template('cart.html', cart=cart, subtotal=subtotal, form=form)
+    else:
+        return render_template('index.html')
+
 # menu page for customers
 @app.route('/menu', methods=['GET'])
 def menu():
-    menudata=Menu.query.all()
+    menudata=Menu.query.filter_by(approved=True)
     all_dishes = [item.serialize() for item in menudata]
     return render_template('menu.html', menus=all_dishes)
+
+# add item from menu page to cart for customers
+@app.route('/menu/<int:id>', methods=['GET', 'POST'])
+def add_cart(id):
+    customer = Customer.query.get(current_user.id)
+    dish = Menu.query.get(id)
+    form=AddToCart()
+    if form.validate_on_submit():
+        customer.dishes.append(dish)
+        db.session.commit()
+        return redirect(url_for('cart'))
+    return render_template('menu_item.html', form=form, dish=dish)
 
 # discussion page for customers
 @app.route("/discussion", methods=['GET'])
@@ -168,7 +244,10 @@ def new_food_review():
     form = FoodReviewForm()
     form.dish.choices=menu_list
     if form.validate_on_submit():
-        foodreviews = FoodReview(title=form.title.data, content=form.content.data, menu_id=form.dish.data, customer_id=current_user.id)
+        foodreviews = FoodReview(title=form.title.data, content=form.content.data, \
+            rating=form.rating.data, menu_id=form.dish.data, customer_id=current_user.id)
+        dish = Menu.query.get(form.dish.data)
+        dish.rating = (dish.rating+form.rating.data)/2
         db.session.add(foodreviews)
         db.session.commit()
         flash('Your review has been created!', 'success')
@@ -184,7 +263,10 @@ def new_employee_review():
     form = ComplaintForm()
     form.complainee.choices=employee_list
     if form.validate_on_submit():
-        complaints = Complaint(content=form.content.data, complainee_id=form.complainee.data, filer_id=current_user.id)
+        complaints = Complaint(content=form.content.data, type=form.type.data, \
+            complainee_id=form.complainee.data, filer_id=current_user.id)
+        employee = Employee.query.get(form.complainee.data)
+        employee.rating = (employee.rating+form.rating.data)/2
         db.session.add(complaints)
         db.session.commit()
         flash('Your review has been created!', 'success')
@@ -210,8 +292,12 @@ def edit_reviews(id):
         if form.validate_on_submit():
             complaint.status = form.status.data
             db.session.commit()
-            if (form.status.data=="issue warning"):
+            if (form.status.data=="warning to complainee"):
                 new_warning = Warning(user_id=complaint.complainee_id, content=complaint.content)
+                db.session.add(new_warning)
+                db.session.commit()
+            elif (form.status.data=="warning to filer"):
+                new_warning = Warning(user_id=complaint.filer_id, content=complaint.content)
                 db.session.add(new_warning)
                 db.session.commit()
             return redirect(url_for('reviews'))
@@ -225,7 +311,7 @@ def admin_menu():
     menudata = Menu.query.all()
     return render_template('admin/menu.html', menudata=menudata)
 
-# admin and chef add new dishes to the menu
+# chef requests new dishes to the menu
 @app.route("/admin/menu/add", methods=['GET', 'POST'])
 @login_required
 @require_role("employee")
@@ -235,12 +321,29 @@ def admin_add_menu():
     form = AddMenuForm()
     form.chef.choices=chef_list
     if form.validate_on_submit():
-        new_dish = Menu(name=form.name.data, price=form.price.data, description=form.description.data, category=form.category.data, chef_id=form.chef.data)
+        new_dish = Menu(name=form.name.data, price=form.price.data, \
+            description=form.description.data, category=form.category.data, chef_id=form.chef.data)
         db.session.add(new_dish)
         db.session.commit()
         flash('Your review has been created!', 'success')
         return redirect(url_for('admin_menu'))
     return render_template('admin/add_menu.html', form=form)
+
+# admin approved new dishes to the menu
+@app.route("/admin/menu/<int:id>", methods=['GET', 'POST'])
+@login_required
+@require_role("employee")
+def admin_approve_menu(id):
+    dish = Menu.query.get(id)
+    form = ApproveMenuForm()
+    if form.validate_on_submit():
+        if form.approve.data=="Approved":
+            dish.approved=True
+        else:
+            dish.approved=False
+        db.session.commit()
+        return redirect(url_for('admin_menu'))
+    return render_template('admin/approve_menu.html', form=form, dish=dish)
 
 # admin views and manages employees
 @app.route("/admin/employees", methods=['GET', 'POST'])
@@ -248,9 +351,13 @@ def admin_add_menu():
 @require_role("employee")
 def admin_employees():
     employeedata = Employee.query.all()
-    return render_template('admin/employees.html', employeedata=employeedata)
+    for employee in employeedata:
+        for item in employee.complaints_filed_against:
+            if item.type=="compliment":
+                compliments = [(employee.id, item.id)]
+    return render_template('admin/employees.html', employeedata=employeedata, compliments=compliments)
 
-# admin and chef add new dishes to the menu
+# admin adds employee to staff
 @app.route("/admin/employees/add", methods=['GET', 'POST'])
 @login_required
 @require_role("employee")
@@ -265,3 +372,22 @@ def admin_add_employee():
         flash('Your review has been created!', 'success')
         return redirect(url_for('admin_employees'))
     return render_template('admin/add_employee.html', form=form)
+
+# admin edits employee information
+@app.route("/admin/employees/<int:id>", methods=['GET', 'POST'])
+@login_required
+@require_role("employee")
+def admin_update_employee(id):
+    employee = Employee.query.get(id)
+    form = UpdateEmployeeForm()
+    if form.validate_on_submit():
+        if form.active.data is True:
+            Employee.query.filter_by(id=id).delete()
+        else:
+            if form.salary.data < employee.salary:
+                Warning.query.filter_by(user_id=id).delete()
+            employee.position=form.position.data
+            employee.salary=form.salary.data
+        db.session.commit()
+        return redirect(url_for('admin_employees'))
+    return render_template('admin/update_employee.html', form=form, employee=employee)

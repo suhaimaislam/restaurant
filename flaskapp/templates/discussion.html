@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="reviews_container">
+<section class="content-section">
     <div id="food_reviews centered">
         <h2>Food Reviews</h2>
         {% for review in food_reviews %}
@@ -16,6 +16,7 @@
                 <p>Author: {{ review.author.username }}</p>
                 <p>Date: {{ review.date_posted.strftime('%m-%d-%Y | %I:%M:%S %p') }}</p> <!--date format changed-->
                 <p>Review: {{ review.content }}</p>
+                <p>Rating: {{ review.rating }}</p>
             </div>
             <hr style="width:50%;text-align:left;margin-left:0">
         {% endfor %}
@@ -25,13 +26,16 @@
     <div id="employee_reviews centered">
         <h2>Employee Reviews</h2>
         {% for complaint in complaints %}
+        {% if complaint.complainee.type=="employee" %}
             <div id="complaint_item">
                 <h5>About: {{ complaint.complainee.username }}</h5>
                 <h6>By: {{ complaint.filer.username }}</h6>
                 <p>Date: {{ complaint.date_filed }}</p>
                 <p>{{ complaint.content }}</p>
+                <p>Employee Rating: {{ complaint.complainee.rating }}</p>
             </div>
             <hr style="width:50%;text-align:left;margin-left:0">
+        {% endif %}
         {% endfor %}
         <p>We value your feedback!</p> <a href="/discussion/new_employee_review">Write An Employee Compliment/Complaint</a>
     </div>

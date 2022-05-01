@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+<!-- Cart Page -->
+{% block head %}
+<title>Cart</title>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1>Cart</h1>
+
+    {% for item in cart %}
+        <h5>{{ item.name }}</h5>
+        <h6>PRICE: {{ item.price }}</h6>
+        <hr width="50%">
+    {% endfor %}
+
+    <p>Subtotal: $ {{ subtotal }}</p>
+    
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

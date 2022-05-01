@@ -1,10 +1,11 @@
 from cgi import print_exception
+from email.policy import default
 from tokenize import String
 from unicodedata import name
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FloatField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
-from flaskapp.models import User
+from flaskapp.models import *
 
 # form for visitor to register as customer
 class RegistrationForm(FlaskForm):
@@ -59,31 +60,57 @@ class FoodReviewForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     dish = SelectField('Dish', coerce=int, validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
+    rating = SelectField('Rating', coerce=int, choices = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], validators=[DataRequired()])
     submit = SubmitField('Post')
 
 # form for user to file a compliment/complaint
 class ComplaintForm(FlaskForm):
     complainee = SelectField('About', coerce=int, validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
+    type=SelectField('Review Type', choices = [('0', '-- select an option --'), ('compliment', 'compliment'), ('complaint', 'complaint')])
+    rating = SelectField('Rating', coerce=int, choices = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], validators=[DataRequired()])
     submit = SubmitField('Post')
 
 # form for manager to update compliment/complaint status
 class UpdateComplaintForm(FlaskForm):
-    status = SelectField('Status', choices = [('open', 'open'), ('dismiss', 'dismiss'), ('issue warning', 'issue warning')])
+    status = SelectField('Status', \
+        choices = [('0', '-- select an option --'), ('open', 'open'), \
+            ('warning to filer', 'warning to filer'), ('warning to complainee', 'warning to complainee')])
     submit = SubmitField('Save')
 
-# form for manager and chef to add dishes to the menu
+# form for chef to request dish to the menu
 class AddMenuForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     price = FloatField('Price', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
-    category = SelectField('Category', choices = [('breakfast', 'breakfast'), ('lunch', 'lunch'), ('dinner', 'dinner')])
+    category = SelectField('Category', choices = [('0', '-- select an option --'), ('breakfast', 'breakfast'), ('lunch', 'lunch'), ('dinner', 'dinner')], validators=[DataRequired()])
     chef = SelectField('Chef', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+# form for manager to approve a request for a new dish
+class ApproveMenuForm(FlaskForm):
+    approve = SelectField('Category', choices = [('0', '-- select an option --'), ('Approved', 'Approved'), ('Denied', 'Denied')], validators=[DataRequired()])
     submit = SubmitField('Add')
 
 # form for manager to hire employees and add them to employee list
 class AddEmployeeForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired()])
-    position = SelectField('Position', choices = [('manager', 'manager'), ('chef', 'chef'), ('delivery', 'delivery')])
+    position = SelectField('Position', choices = [('0', '-- select an option --'), ('manager', 'manager'), ('chef', 'chef'), ('delivery', 'delivery')], validators=[DataRequired()])
     salary = FloatField('Salary', validators=[DataRequired()])
     submit = SubmitField('Add')
+
+# form for manager to update employee information
+class UpdateEmployeeForm(FlaskForm):
+    position = SelectField('Position', choices = [('0', '-- select an option --'), ('manager', 'manager'), ('chef', 'chef'), ('delivery', 'delivery')], validators=[DataRequired()])
+    salary = FloatField('Salary')
+    active = BooleanField('Fire Employee')
+    submit = SubmitField('Update')
+
+# form to add to cart
+class AddToCart(FlaskForm):
+    # quantity = IntegerField('Quantity', default=1, validators=[DataRequired()])
+    submit = SubmitField('Add To Cart')
+
+# form to place order
+class PlaceOrder(FlaskForm):
+    submit = SubmitField('Place Order')

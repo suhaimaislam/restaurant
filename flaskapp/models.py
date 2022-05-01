@@ -37,7 +37,8 @@ class Employee(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     position = db.Column(db.String(50))
     salary = db.Column(db.Float)
-    dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic')
+    rating = db.Column(db.Float, default=5.0)
+    dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic') # dishes made by chef
 
     __mapper_args__ = {'polymorphic_identity': 'employee'}
 
@@ -51,7 +52,9 @@ class Customer(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(30), default="Registered")
     deposit = db.Column(db.Float, default=0.0)
+    dishes = db.relationship('Menu', back_populates='customer', lazy='dynamic') # dishes in cart
     foodreviews = db.relationship('FoodReview', back_populates='author', lazy='dynamic')
+    orders = db.relationship('Order', back_populates='customer')
 
     __mapper_args__ = {'polymorphic_identity': 'customer'}
 
@@ -67,13 +70,23 @@ class Menu(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50))
+    rating = db.Column(db.Float, nullable=False, default=5.0)
     reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
-    chef_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
-    chef = db.relationship('Employee', back_populates='dishes')
     # image
 
+    chef_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
+    chef = db.relationship('Employee', back_populates='dishes')
+
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
+    customer = db.relationship('Customer', back_populates='dishes')
+    
+    approved = db.Column(db.Boolean, default=False)
+
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    order = db.relationship('Order', back_populates='dishes')
+
     def __repr__(self):
-        return f"Menu('{self.name}', '{self.price}', '{self.description}', '{self.category}')"
+        return f"Menu('{self.name}', '{self.price}', '{self.description}', '{self.category}', '{self.rating}')"
     
     def serialize(self):
         return {
@@ -81,7 +94,10 @@ class Menu(db.Model):
             "name": self.name,
             "price": self.price,
             "description": self.description,
-            "category": self.category
+            "category": self.category,
+            "rating": self.rating,
+            "chef": self.chef,
+            "approved": self.approved
         }
 
 # food review model
@@ -92,6 +108,7 @@ class FoodReview(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False,  default=datetime.now) #<---changed from UTC to Local Time
     content = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer)
     
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     author = db.relationship('Customer', back_populates='foodreviews')
@@ -104,9 +121,12 @@ class FoodReview(db.Model):
 
 # complaints model
 class Complaint(db.Model):
+    __tablename__ = "complaints"
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     date_filed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    type = db.Column(db.String, default="compliment")
     # add date updated
     complainee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     filer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -121,6 +141,8 @@ class Complaint(db.Model):
     
 # warnings model
 class Warning(db.Model):
+    __tablename__ = "warnings"
+
     id = db.Column(db.Integer, primary_key=True)
     date_received = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)    
@@ -130,3 +152,17 @@ class Warning(db.Model):
 
     def __repr__(self):
         return f'Warning({self.date_received}, {self.content}, {self.user_id})'
+
+# orders model
+class Order(db.Model):
+    __tablename__ = "orders"
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    total = db.Column(db.Float)
+    dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer = db.relationship('Customer', back_populates='orders')
+
+    def __repr__(self):
+        return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id})'

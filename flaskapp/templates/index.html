@@ -8,7 +8,7 @@
 {% block content %}
 <div class="home">
 
-    {% if warnings is defined and warnings.count() > 0%}
+    {% if warnings is defined and warnings.count() > 0 %}
     <div class="header">
         <p>Warning on Account</p>
         <a href="/profile">Click to See Details</a>
@@ -45,6 +45,7 @@
         </a>
     </div>
 
+    {% if top_dishes is defined and top_dishes.count() > 0 %}
     <div id="explore">
         <h3>MOST POPULAR DISHES</h3>
     </div>
@@ -56,8 +57,10 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card1img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 1</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ top_dishes[0].name }}</h5>
+                        <p class="card-text">{{ top_dishes[0].description }}</p>
+                        <p class="card-text">Rating: {{ top_dishes[0].rating }}</p>
+                        <p class="card-text">${{ top_dishes[0].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
@@ -67,8 +70,10 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card2img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 2</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ top_dishes[1].name }}</h5>
+                        <p class="card-text">{{ top_dishes[1].description }}</p>
+                        <p class="card-text">Rating: {{ top_dishes[1].rating }}</p>
+                        <p class="card-text">${{ top_dishes[1].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
@@ -78,15 +83,19 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card3img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 3</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ top_dishes[2].name }}</h5>
+                        <p class="card-text">{{ top_dishes[2].description }}</p>
+                        <p class="card-text">Rating: {{ top_dishes[2].rating }}</p>
+                        <p class="card-text">${{ top_dishes[2].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 
+    {% if highest_rated is defined and highest_rated.count() > 0 %}
     <div id="explore">
         <h3>HIGHEST-RATED DISHES</h3>
     </div>
@@ -98,8 +107,10 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card1img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 1</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ highest_rated[0].name }}</h5>
+                        <p class="card-text">{{ highest_rated[0].description }}</p>
+                        <p class="card-text">Rating: {{ highest_rated[0].rating }}</p>
+                        <p class="card-text">${{ highest_rated[0].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
@@ -109,8 +120,10 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card2img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 2</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ highest_rated[1].name }}</h5>
+                        <p class="card-text">{{ highest_rated[1].description }}</p>
+                        <p class="card-text">Rating: {{ highest_rated[1].rating }}</p>
+                        <p class="card-text">${{ highest_rated[1].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
@@ -120,14 +133,17 @@
                     <img src="https://media.istockphoto.com/photos/fresh-cakes-picture-id497959594?k=20&m=497959594&s=612x612&w=0&h=Pzq7lXr-_J2p9aNEio4QrV3pquWUr4TIAu3yRMqeV_E="
                         class="card-img-top" alt="card3img">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Dish 3</h5>
-                        <p class="card-text">Description and Price</p>
+                        <h5 class="card-title fw-bold">{{ highest_rated[2].name }}</h5>
+                        <p class="card-text">{{ highest_rated[2].description }}</p>
+                        <p class="card-text">Rating: {{ highest_rated[2].rating }}</p>
+                        <p class="card-text">${{ highest_rated[2].price }}</p>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 
     <figure class="quote">
         <blockquote>

@@ -11,6 +11,7 @@
             <th>Rating</th>
             <th>Description</th>
             <th>Chef</th>
+            <th>Approval</th>
             <th>Edit</th>
           </tr>
         </thead>
@@ -22,6 +23,7 @@
               <td>{{ menu.rating }}</td>
               <td>{{ menu.description }}</td>
               <td>{{ menu.chef.username }}</td>
+              <td>{{ menu.approved }}</td>
               <td><a href="/admin/menu/{{menu.id}}">Edit</a></td>
             </tr>
           {% endfor %}

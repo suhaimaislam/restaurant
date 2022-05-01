@@ -19,6 +19,8 @@
                 <h6>PRICE: {{ menu.price }}</h6>
                 <h6>RATING: {{ menu.rating }}</h6>
                 <h6>DESCRIPTION: {{ menu.description }}</h6>
+                <h6>CHEF: {{ menu.chef.username }}</h6>
+                <a href="/menu/{{menu.id}}" class="btn btn-primary">Add to Cart</a>
               </div>
             {% endif %}
           {% endfor %}
@@ -33,6 +35,8 @@
                 <h6>PRICE: {{ menu.price }}</h6>
                 <h6>RATING: {{ menu.rating }}</h6>
                 <h6>DESCRIPTION: {{ menu.description }}</h6>
+                <h6>CHEF: {{ menu.chef.username }}</h6>
+                <a href="/menu/{{menu.id}}" class="btn btn-primary">Add to Cart</a>
               </div>
             {% endif %}
           {% endfor %}
@@ -47,6 +51,8 @@
                 <h6>PRICE: {{ menu.price }}</h6>
                 <h6>RATING: {{ menu.rating }}</h6>
                 <h6>DESCRIPTION: {{ menu.description }}</h6>
+                <h6>CHEF: {{ menu.chef.username }}</h6>
+                <a href="/menu/{{menu.id}}" class="btn btn-primary">Add to Cart</a>
               </div>
             {% endif %}
           {% endfor %}
