@@ -1,0 +1,38 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+    <h2>Approve Dish</h2>
+    
+    <h4>Dish Information</h4>
+    <h5>{{ dish.name }}</h5>
+    <h6>PRICE: {{ dish.price }}</h6>
+    <h6>RATING: {{ dish.rating }}</h6>
+    <h6>DESCRIPTION: {{ dish.description }}</h6>
+    <h6>CATEGORY: {{ dish.category }}</h6>
+    <h6>CHEF: {{ dish.chef.username }}</h6>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ form.approve.label(class="form-control-label") }}
+
+                {% if form.approve.errors %}
+                    {{ form.approve(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.approve.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.approve(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    </div>
+{% endblock %}

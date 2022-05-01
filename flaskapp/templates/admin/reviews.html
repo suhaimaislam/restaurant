@@ -8,6 +8,7 @@
           <tr>
             <th>Filer</th>
             <th>About</th>
+            <th>Type</th>
             <th>Content</th>
             <th>Date Filed</th>
             <th>Status</th>
@@ -19,10 +20,13 @@
             <tr>
               <td>{{ complaint.filer.username }}</td>
               <td>{{ complaint.complainee.username }}</td>
+              <td>{{ complaint.type }}</td>
               <td>{{ complaint.content }}</td>
               <td>{{ complaint.date_filed }}</td>
               <td>{{ complaint.status }}</td>
+              {% if complaint.type == "complaint" %}
               <td><a href="/admin/reviews/{{complaint.id}}">Edit</a></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
