@@ -33,8 +33,8 @@ def build_sample_db():
     ]
 
     customer = [
-        Customer(id=4, email="twainM@gmail.com", username="Mark Twain", password=bcrypt.generate_password_hash("TomSawyer"), type="customer", status="registered"),
-        Customer(id=5, email="dickensC@yahoo.com", username="Charles Dickens", password=bcrypt.generate_password_hash("2Cities"), type="customer", status="vip"),
+        Customer(id=4, email="twainM@gmail.com", username="Mark Twain", password=bcrypt.generate_password_hash("TomSawyer"), type="customer", status="Registered"),
+        Customer(id=5, email="dickensC@yahoo.com", username="Charles Dickens", password=bcrypt.generate_password_hash("2Cities"), type="customer", status="VIP"),
     ]
 
     menu = [
@@ -47,7 +47,13 @@ def build_sample_db():
     complaint = [
         Complaint(id=1, content="I want my carpet back", type="complaint", complainee_id=3, filer_id=4),
         Complaint(id=2, content="The best delivery ever", type="compliment", complainee_id=3, filer_id=2),
-        Complaint(id=3, content="very rude customer", type="complaint", complainee_id=4, filer_id=2)
+        Complaint(id=3, content="very rude customer", type="complaint", complainee_id=4, filer_id=2),
+
+        Complaint(id=4, content="I want my carpet back", type="complaint", complainee_id=3, filer_id=4),
+        Complaint(id=5, content="The best delivery ever", type="complaint", complainee_id=4, filer_id=2),
+        Complaint(id=6, content="very rude customer", type="complaint", complainee_id=2, filer_id=4),
+        Complaint(id=7, content="The best delivery ever", type="complaint", complainee_id=4, filer_id=6),
+        Complaint(id=8, content="very rude customer", type="complaint", complainee_id=6, filer_id=4)
     ]
 
     db.session.add_all(menu)

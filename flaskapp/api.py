@@ -96,28 +96,31 @@ def logout():
 def profile():
     if current_user.is_authenticated:
         warnings = Warning.query.filter_by(user_id=current_user.id)
+        orders = Order.query.filter_by(customer_id=current_user.id)
     if current_user.is_authenticated and current_user.type=="customer":
         user = Customer.query.filter_by(id=current_user.id).first()
         status = user.status
         deposit = user.deposit
         address = user.address
 
-        return render_template('profile.html', 
+        return render_template('profile.html',
                                 user=user, 
                                 status=status,
                                 deposit=deposit,
                                 address=address,
-                                warnings=warnings)
+                                warnings=warnings,
+                                orders=orders)
     elif current_user.is_authenticated and current_user.type=="employee":
         user = Employee.query.filter_by(id=current_user.id).first()
         position = user.position
         salary = user.salary
 
-        return render_template('admin/profile.html', 
+        return render_template('admin/profile.html',
                                 user=user, 
                                 position=position,
                                 salary=salary,
-                                warnings=warnings)
+                                warnings=warnings, 
+                                orders=orders)
 
 # update address page for customers
 @app.route('/update_address', methods=['GET', 'POST'])
@@ -154,18 +157,54 @@ def deposit_money():
 def cart():
     if current_user.is_authenticated:
         curr = Customer.query.get(current_user.id)
+        
         cart = curr.dishes
         subtotal = 0
-        for item in cart:
+        for item in cart: # calculate total of cart
             subtotal += item.price
+
         form=PlaceOrder()
         if form.validate_on_submit():
-            new_order = Order(total=subtotal, dishes=cart, customer_id=current_user.id)
-            curr.deposit -= subtotal
-            curr.dishes = []
-            db.session.add(new_order)
-            db.session.commit()
-            return redirect(url_for('home')) 
+            if subtotal < curr.deposit: # places order if order total < customer account deposit
+
+                if curr.status == 'VIP': # 5% discount if customer is VIP
+                    subtotal *= 0.95
+
+                new_order = Order(total=subtotal, dishes=cart, customer_id=current_user.id)
+                curr.deposit -= subtotal
+                curr.dishes = []
+                db.session.add(new_order)
+                db.session.commit()
+
+                history = 0 # calculate total money spent by customer on all orders
+                for order in curr.orders:
+                    history += order.total
+                
+                outstanding = True # check if customer has outstanding complaints
+                for complaint in Complaint.query.filter_by(complainee_id=current_user.id):
+                    if complaint.type == 'complaint' and complaint.status != 'open':
+                        outstanding = False
+                    elif complaint.type == 'complaint' and complaint.status == 'open':
+                        outstanding = True
+                for complaint in Complaint.query.filter_by(filer_id=current_user.id):
+                    if complaint.type == 'complaint' and complaint.status != 'open':
+                        outstanding = False
+                    elif complaint.type == 'complaint' and complaint.status == 'open':
+                        outstanding = True
+                
+                # makes customer status a VIP if customer has placed more than 5 orders
+                # and either spent more than $100 or has no outstanding complaints
+                if len(curr.orders) > 5 and (history > 100 or outstanding is False):
+                    curr.status = "VIP"
+                
+                db.session.commit()
+                return redirect(url_for('home')) 
+
+            elif subtotal > curr.deposit: # issues warning and does not order if order total > customer account deposit
+                new_warning = Warning(content="Order total exceed account deposit", user_id=current_user.id)
+                db.session.add(new_warning)
+                db.session.commit()
+                return redirect(url_for('profile')) 
         return render_template('cart.html', cart=cart, subtotal=subtotal, form=form)
     else:
         return render_template('index.html')
