@@ -72,7 +72,7 @@ class Menu(db.Model):
     category = db.Column(db.String(50))
     rating = db.Column(db.Float, nullable=False, default=5.0)
     reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
-    # image
+    image = db.Column(db.String(500), nullable=False)
 
     chef_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
     chef = db.relationship('Employee', back_populates='dishes')
@@ -86,7 +86,7 @@ class Menu(db.Model):
     order = db.relationship('Order', back_populates='dishes')
 
     def __repr__(self):
-        return f"Menu('{self.name}', '{self.price}', '{self.description}', '{self.category}', '{self.rating}')"
+        return f"Menu('{self.name}', '{self.price}', '{self.description}', '{self.category}', '{self.rating}', '{self.image}')"
     
     def serialize(self):
         return {
@@ -97,7 +97,8 @@ class Menu(db.Model):
             "category": self.category,
             "rating": self.rating,
             "chef": self.chef,
-            "approved": self.approved
+            "approved": self.approved,
+            "image": self.image
         }
 
 # food review model

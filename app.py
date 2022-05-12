@@ -38,10 +38,10 @@ def build_sample_db():
     ]
 
     menu = [
-        Menu(id=1, name='Chocolate Chip Waffles', price=8.5, description='Dough-based, caramelized waffle topped with vanilla bean ice-cream', category='breakfast', chef_id=3, approved=True),
-        Menu(id=2, name='Avocado Toast', price=9, description='Sourbread Dough, Tomato, Microgreens', category='breakfast', chef_id=6, approved=True),
-        Menu(id=3, name='Peri Peri Chicken Burger', price=12, description='chicken infused with hot chili peppers, jalapenos, lemon, vinegar, herbs, and spices', category='lunch', chef_id=3, approved=True),
-        Menu(id=4, name='Fettuccine Alfredo', price=15, description='fresh fettuccine tossed with butter and Parmesan cheese', category='dinner', chef_id=6, approved=True)
+        Menu(id=1, name='Chocolate Chip Waffles', price=8.5, description='Dough-based, caramelized waffle topped with vanilla bean ice-cream', category='breakfast', chef_id=3, approved=True, image="https://res.cloudinary.com/mealthy1/image/upload/ar_16:11,c_fill,f_auto,h_600,q_auto:best,w_800/v1497536871/Peanut-Butter-Chocolate-Chip-Waffles-2-5.jpg"),
+        Menu(id=2, name='Avocado Toast', price=9, description='Sourbread Dough, Tomato, Microgreens', category='breakfast', chef_id=6, approved=True, image="https://www.thespruceeats.com/thmb/J6UgyxYr0uZcgPIYmq329LJ8hg8=/3233x2155/filters:fill(auto,1)/avocado-toast-4174244-hero-03-d9d005dc633f44889ba5385fe4ebe633.jpg"),
+        Menu(id=3, name='Peri Peri Chicken Burger', price=12, description='chicken infused with hot chili peppers, jalapenos, lemon, vinegar, herbs, and spices', category='lunch', chef_id=3, approved=True, image="https://i.ytimg.com/vi/eGZvxjvJe3c/maxresdefault.jpg"),
+        Menu(id=4, name='Fettuccine Alfredo', price=15, description='fresh fettuccine tossed with butter and Parmesan cheese', category='dinner', chef_id=6, approved=True, image="https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/2/4/1/RX-FNM_030111-Lighten-Up-012_s4x3.jpg.rend.hgtvcom.616.462.suffix/1382539856907.jpeg")
     ]
 
     complaint = [
