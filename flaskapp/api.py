@@ -165,6 +165,7 @@ def cart():
         for item in cart: # calculate total of cart
             quantity = item.quantity
             subtotal += item.price * quantity
+            
 
         total = subtotal + fee
 
@@ -185,6 +186,9 @@ def cart():
                 curr.dishes = []
                 db.session.add(new_order)
                 db.session.commit()
+                # print(db.session.query(Order.id, Order.date, Order.total, Order.customer_id, Order.quantity).all())
+                
+                
 
                 history = 0 # calculate total money spent by customer on all orders
                 for order in curr.orders:
@@ -208,6 +212,7 @@ def cart():
                     curr.status = "VIP"
                 
                 db.session.commit()
+                # print(db.session.query(Customer.id, Customer.deposit, Customer.status).all())
                 return redirect(url_for('home')) 
 
             elif subtotal > curr.deposit: # issues warning and does not order if order total > customer account deposit
@@ -402,3 +407,13 @@ def admin_update_employee(id):
         db.session.commit()
         return redirect(url_for('admin_employees'))
     return render_template('admin/update_employee.html', form=form, employee=employee)
+
+    # admin views and manages orders
+@app.route("/admin/orders", methods=['GET', 'POST'])
+@login_required
+@require_role("employee")
+def admin_orders():
+    currorders = Order.query.all()
+    for order in currorders:
+        total = order.total
+    return render_template('admin/orders.html', currorders=currorders, total = total) # make new orders.html file
