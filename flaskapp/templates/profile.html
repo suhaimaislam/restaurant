@@ -11,7 +11,7 @@
       <h1>Welcome {{ user.username }}</h1>
 
       <p>Status: {{ user.status }} Customer</p>
-      <p>Deposit: ${{ user.deposit }}</p>
+      <p>Balance: ${{ user.deposit }}</p>
       <small>Not enough money on your account?</small> <a href="{{ url_for('deposit_money') }}">Deposit Money</a>
       {% if user.address %}
         <p>Address: {{ user.address }}</p>
