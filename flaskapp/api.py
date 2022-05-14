@@ -157,11 +157,16 @@ def deposit_money():
 def cart():
     if current_user.is_authenticated:
         curr = Customer.query.get(current_user.id)
-        
+
         cart = curr.dishes
         subtotal = 0
+        fee = 0
+        total = 0
         for item in cart: # calculate total of cart
-            subtotal += item.price
+            quantity = item.quantity
+            subtotal += item.price * quantity
+
+        total = subtotal + fee
 
         form=PlaceOrder()
         if form.validate_on_submit():
@@ -170,8 +175,13 @@ def cart():
                 if curr.status == 'VIP': # 5% discount if customer is VIP
                     subtotal *= 0.95
 
-                new_order = Order(total=subtotal, dishes=cart, customer_id=current_user.id)
+                new_order = Order(total=subtotal, dishes=cart, fees = fee, customer_id=current_user.id)
                 curr.deposit -= subtotal
+
+                cart = curr.dishes
+                for item in cart: #reset item quantitie to 0 after order is placed
+                    item.quantity = 0
+
                 curr.dishes = []
                 db.session.add(new_order)
                 db.session.commit()
@@ -205,7 +215,7 @@ def cart():
                 db.session.add(new_warning)
                 db.session.commit()
                 return redirect(url_for('profile')) 
-        return render_template('cart.html', cart=cart, subtotal=subtotal, form=form)
+        return render_template('cart.html', cart=cart, subtotal=subtotal, form=form, fees = fee, total = total)
     else:
         return render_template('index.html')
 
@@ -223,6 +233,7 @@ def add_cart(id):
     dish = Menu.query.get(id)
     form=AddToCart()
     if form.validate_on_submit():
+        dish.quantity += 1
         customer.dishes.append(dish)
         db.session.commit()
         return redirect(url_for('cart'))
