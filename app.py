@@ -56,11 +56,21 @@ def build_sample_db():
         Complaint(id=8, content="very rude customer", type="complaint", complainee_id=6, filer_id=4)
     ]
 
+    orders = [
+        Order(id = 1, date = datetime(2022, 5, 14, 15, 36, 26, 863258), total = 26.0, fees = 0, customer_id = 4, quantity = None),
+        Order(id = 2, date = datetime(2022, 5, 14, 15, 36, 46, 544075), total = 54.0, fees = 0, customer_id = 4, quantity = None),
+        Order(id = 3, date = datetime(2022, 5, 14, 15, 36, 51, 446025), total = 9.0, fees = 0, customer_id= 4, quantity = None),
+        Order(id = 4, date = datetime(2022, 5, 14, 15, 37, 21, 421083), total = 34.0, fees = 0, customer_id = 4, quantity = None),
+        Order(id = 5, date = datetime(2022, 5, 14, 15, 39, 13, 193241), total = 42.75, fees = 0,customer_id = 5, quantity = None),
+        Order(id = 6, date = datetime(2022, 5, 14, 15, 39, 18, 94277), total = 8.075, fees = 0, customer_id = 5, quantity = None)
+    ]
+
     db.session.add_all(menu)
     db.session.add_all(employee)
     db.session.add_all(customer)
     db.session.add_all(complaint)
     db.session.add(test_admin)
+    db.session.add_all(orders)
     db.session.commit()
 
     print("Completed!")
