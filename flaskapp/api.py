@@ -84,6 +84,8 @@ def employee_login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('employee_login.html', title='Login', form=form)
 
+
+
 # logout page 
 @app.route("/logout")
 def logout():

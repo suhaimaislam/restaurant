@@ -10,10 +10,10 @@
     <h1>Cart</h1>
 
     {% for item in cart %}
-        <h5>{{ item.name }}</h5>
-        <h6>PRICE: {{ item.price }}</h6>
-        <h6>Qty: {{ item.quantity }}</h6>
-        <hr width="50%">
+    <h5>{{ item.name }}</h5>
+    <h6>PRICE: {{ item.price }}</h6>
+    <h6>Qty: {{ item.quantity }}</h6>
+    <hr width="50%">
     {% endfor %}
 
     <p>Subtotal: $ {{ subtotal }}</p>
@@ -22,7 +22,7 @@
     <p>Order Total: {{ total }} $</p>
 
 
-    
+
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <div class="form-group">
