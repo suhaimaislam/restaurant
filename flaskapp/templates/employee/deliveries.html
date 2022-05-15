@@ -1,0 +1,35 @@
+{% extends 'employee/delivery_navbar.html' %}
+
+
+
+{% block content %}
+
+    <div class="content-section">
+    <h2>Open Deliveries</h2>
+      <table id="data" class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Fees</th>
+            <th>Customer</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in currorders %}
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ order.date }}</td>
+              <td>{{ order.total }}</td>
+              <td>{{ order.fees }}</td>
+              <td>{{ order.customer_id }}</td>
+              <td>{{ order.quantity }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+{% endblock %}
