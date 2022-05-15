@@ -84,6 +84,8 @@ def employee_login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('employee_login.html', title='Login', form=form)
 
+
+
 # logout page 
 @app.route("/logout")
 def logout():
@@ -157,11 +159,17 @@ def deposit_money():
 def cart():
     if current_user.is_authenticated:
         curr = Customer.query.get(current_user.id)
-        
+
         cart = curr.dishes
         subtotal = 0
+        fee = 0
+        total = 0
         for item in cart: # calculate total of cart
-            subtotal += item.price
+            quantity = item.quantity
+            subtotal += item.price * quantity
+            
+
+        total = subtotal + fee
 
         form=PlaceOrder()
         if form.validate_on_submit():
@@ -170,11 +178,19 @@ def cart():
                 if curr.status == 'VIP': # 5% discount if customer is VIP
                     subtotal *= 0.95
 
-                new_order = Order(total=subtotal, dishes=cart, customer_id=current_user.id)
+                new_order = Order(total=subtotal, dishes=cart, fees = fee, customer_id=current_user.id)
                 curr.deposit -= subtotal
+
+                cart = curr.dishes
+                for item in cart: #reset item quantitie to 0 after order is placed
+                    item.quantity = 0
+
                 curr.dishes = []
                 db.session.add(new_order)
                 db.session.commit()
+                # print(db.session.query(Order.id, Order.date, Order.total, Order.customer_id, Order.quantity).all())
+                
+                
 
                 history = 0 # calculate total money spent by customer on all orders
                 for order in curr.orders:
@@ -198,6 +214,7 @@ def cart():
                     curr.status = "VIP"
                 
                 db.session.commit()
+                # print(db.session.query(Customer.id, Customer.deposit, Customer.status).all())
                 return redirect(url_for('home')) 
 
             elif subtotal > curr.deposit: # issues warning and does not order if order total > customer account deposit
@@ -205,7 +222,7 @@ def cart():
                 db.session.add(new_warning)
                 db.session.commit()
                 return redirect(url_for('profile')) 
-        return render_template('cart.html', cart=cart, subtotal=subtotal, form=form)
+        return render_template('cart.html', cart=cart, subtotal=subtotal, form=form, fees = fee, total = total)
     else:
         return render_template('index.html')
 
@@ -223,6 +240,7 @@ def add_cart(id):
     dish = Menu.query.get(id)
     form=AddToCart()
     if form.validate_on_submit():
+        dish.quantity += 1
         customer.dishes.append(dish)
         db.session.commit()
         return redirect(url_for('cart'))
@@ -391,3 +409,13 @@ def admin_update_employee(id):
         db.session.commit()
         return redirect(url_for('admin_employees'))
     return render_template('admin/update_employee.html', form=form, employee=employee)
+
+    # admin views and manages orders
+@app.route("/admin/orders", methods=['GET', 'POST'])
+@login_required
+@require_role("employee")
+def admin_orders():
+    currorders = Order.query.all()
+    for order in currorders:
+        total = order.total
+    return render_template('admin/orders.html', currorders=currorders, total = total) # make new orders.html file

@@ -17,9 +17,9 @@ class User(db.Model, UserMixin):
     address = db.Column(db.Text(30))
     type = db.Column(db.String(30))
 
+    # Relationships
     complaints_filed_against = db.relationship('Complaint', foreign_keys='Complaint.complainee_id', back_populates='complainee')
     complaints_filed = db.relationship('Complaint', foreign_keys='Complaint.filer_id', back_populates='filer')
-
     warnings = db.relationship('Warning', back_populates='user')
 
     __mapper_args__ = {
@@ -38,6 +38,8 @@ class Employee(User):
     position = db.Column(db.String(50))
     salary = db.Column(db.Float)
     rating = db.Column(db.Float, default=5.0)
+
+    # Relationships
     dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic') # dishes made by chef
 
     __mapper_args__ = {'polymorphic_identity': 'employee'}
@@ -52,6 +54,8 @@ class Customer(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(30), default="Registered")
     deposit = db.Column(db.Float, default=0.0)
+
+    # Relationships
     dishes = db.relationship('Menu', back_populates='customer', lazy='dynamic') # dishes in cart
     foodreviews = db.relationship('FoodReview', back_populates='author', lazy='dynamic')
     orders = db.relationship('Order', back_populates='customer')
@@ -71,6 +75,10 @@ class Menu(db.Model):
     description = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50))
     rating = db.Column(db.Float, nullable=False, default=5.0)
+    approved = db.Column(db.Boolean, default=False)
+    quantity = db.Column(db.Integer, default = 0)
+
+    # Relationships
     reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
     image = db.Column(db.String(500), nullable=False)
 
@@ -79,8 +87,6 @@ class Menu(db.Model):
 
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
     customer = db.relationship('Customer', back_populates='dishes')
-    
-    approved = db.Column(db.Boolean, default=False)
 
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship('Order', back_populates='dishes')
@@ -111,6 +117,7 @@ class FoodReview(db.Model):
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer)
     
+    #Relationships
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     author = db.relationship('Customer', back_populates='foodreviews')
 
@@ -131,11 +138,12 @@ class Complaint(db.Model):
     # add date updated
     complainee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     filer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.String, nullable=False, default="open")
 
+    #Relationships
     complainee = db.relationship('User', foreign_keys='Complaint.complainee_id', back_populates='complaints_filed_against')
     filer = db.relationship('User', foreign_keys='Complaint.filer_id', back_populates='complaints_filed')
 
-    status = db.Column(db.String, nullable=False, default="open")
 
     def __repr__(self):
         return f'Complaint({self.content}, {self.date_filed}, {self.complainee_id}, {self.filer_id}, {self.complainee}, {self.filer}, {self.status})'
@@ -148,6 +156,7 @@ class Warning(db.Model):
     date_received = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)    
 
+    #Relationships
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', back_populates='warnings')
 
@@ -161,9 +170,13 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     total = db.Column(db.Float)
-    dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
+    fees = db.Column(db.Float, default = 0.0)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    quantity = db.Column(db.Integer)
+
+    #Relationships
     customer = db.relationship('Customer', back_populates='orders')
+    dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
 
     def __repr__(self):
         return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id})'
