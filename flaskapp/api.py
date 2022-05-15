@@ -12,7 +12,7 @@ def require_role(role):
     def decorator(func):
         @wraps(func)
         def wrapped_function(*args, **kwargs):
-            if not current_user.type==role:
+            if not current_user.position==role: #<---- changed to position instead of type
                 return redirect("/")
             else:
                 return func(*args, **kwargs)
@@ -31,9 +31,9 @@ def home():
         top_dishes = Menu.query.order_by(func.random()).limit(3)
         return render_template('index.html', top_dishes=top_dishes)
 
-# home page for employees
+# home page for admin
 @app.route('/admin', methods=['GET'])
-@require_role("employee")
+@require_role("manager")
 def admin_home():
     return render_template('admin/home.html')
 
@@ -112,7 +112,7 @@ def profile():
                                 address=address,
                                 warnings=warnings,
                                 orders=orders)
-    elif current_user.is_authenticated and current_user.type=="employee":
+    elif current_user.is_authenticated and current_user.position=="manager":
         user = Employee.query.filter_by(id=current_user.id).first()
         position = user.position
         salary = user.salary
@@ -123,6 +123,33 @@ def profile():
                                 salary=salary,
                                 warnings=warnings, 
                                 orders=orders)
+    elif current_user.is_authenticated and current_user.position=="delivery":
+        user = Employee.query.filter_by(id = current_user.id).first()
+        position = user.position
+        salary = user.salary
+        rating = user.rating
+
+        return render_template('employee/delivery_profile.html',
+                                user=user, 
+                                position=position,
+                                salary=salary,
+                                warnings=warnings, 
+                                orders=orders,
+                                rating=rating)
+
+    elif current_user.is_authenticated and current_user.position=="chef":
+        user = Employee.query.filter_by(id = current_user.id).first()
+        position = user.position
+        salary = user.salary
+        rating = user.rating
+
+        return render_template('employee/chef_profile.html',
+                                user=user, 
+                                position=position,
+                                salary=salary,
+                                warnings=warnings, 
+                                orders=orders,
+                                rating=rating)
 
 # update address page for customers
 @app.route('/update_address', methods=['GET', 'POST'])
@@ -294,15 +321,31 @@ def new_employee_review():
 # admin views compliments and complaints
 @app.route("/admin/reviews", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
-def reviews():
+@require_role("manager")
+def admin_reviews():
     complaintdata = Complaint.query.all()
-    return render_template('admin/reviews.html', complaintdata=complaintdata) 
+    return render_template('admin/reviews.html', complaintdata=complaintdata)
+
+    # delivery employee views compliments and complaints
+@app.route("/delivery/reviews", methods=['GET', 'POST'])
+@login_required
+@require_role("delivery")
+def delivery_reviews():
+    complaintdata = Complaint.query.all()
+    return render_template('employee/delivery_reviews.html', complaintdata=complaintdata) 
+
+    # chef employee views compliments and complaints
+@app.route("/chef/reviews", methods=['GET', 'POST'])
+@login_required
+@require_role("chef")
+def chef_reviews():
+    complaintdata = Complaint.query.all()
+    return render_template('employee/chef_reviews.html', complaintdata=complaintdata) 
 
 # admin updates status on compliment and complaints
 @app.route("/admin/reviews/<int:id>", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def edit_reviews(id):
     complaint = Complaint.query.get(id)
     if complaint:
@@ -319,20 +362,29 @@ def edit_reviews(id):
                 db.session.add(new_warning)
                 db.session.commit()
             return redirect(url_for('reviews'))
-    return render_template('admin/update_reviews.html', complaint=complaint, form=form) 
+    return render_template('admin/update_reviews.html', complaint=complaint, form=form)
 
-# admin and chef view menu
+# admin view menu
 @app.route("/admin/menu", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_menu():
     menudata = Menu.query.all()
     return render_template('admin/menu.html', menudata=menudata)
 
+# chef view menu
+@app.route("/employee/menu", methods=['GET', 'POST'])
+@login_required
+@require_role("chef")
+def chef_menu():
+    menudata = Menu.query.all()
+    return render_template('employee/menu.html', menudata=menudata)
+
+
 # chef requests new dishes to the menu
 @app.route("/admin/menu/add", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("chef")
 def admin_add_menu():
     chefdata = Employee.query.filter_by(position="chef")
     chef_list = [(person.id, person.username) for person in chefdata]
@@ -343,14 +395,15 @@ def admin_add_menu():
             description=form.description.data, category=form.category.data, chef_id=form.chef.data)
         db.session.add(new_dish)
         db.session.commit()
-        flash('Your review has been created!', 'success')
+        flash('Your dish has been created!', 'success')
         return redirect(url_for('admin_menu'))
     return render_template('admin/add_menu.html', form=form)
+
 
 # admin approved new dishes to the menu
 @app.route("/admin/menu/<int:id>", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_approve_menu(id):
     dish = Menu.query.get(id)
     form = ApproveMenuForm()
@@ -366,7 +419,7 @@ def admin_approve_menu(id):
 # admin views and manages employees
 @app.route("/admin/employees", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_employees():
     employeedata = Employee.query.all()
     for employee in employeedata:
@@ -378,7 +431,7 @@ def admin_employees():
 # admin adds employee to staff
 @app.route("/admin/employees/add", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_add_employee():
     form = AddEmployeeForm()
     if form.validate_on_submit():
@@ -394,7 +447,7 @@ def admin_add_employee():
 # admin edits employee information
 @app.route("/admin/employees/<int:id>", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_update_employee(id):
     employee = Employee.query.get(id)
     form = UpdateEmployeeForm()
@@ -413,9 +466,23 @@ def admin_update_employee(id):
     # admin views and manages orders
 @app.route("/admin/orders", methods=['GET', 'POST'])
 @login_required
-@require_role("employee")
+@require_role("manager")
 def admin_orders():
     currorders = Order.query.all()
-    for order in currorders:
-        total = order.total
-    return render_template('admin/orders.html', currorders=currorders, total = total) # make new orders.html file
+    return render_template('admin/orders.html', currorders=currorders) # make new orders.html file
+
+    # employee views and manages orders
+@app.route("/employee/orders", methods=['GET', 'POST'])
+@login_required
+@require_role("delivery")
+def delivery_orders():
+    currorders = Order.query.all()
+    return render_template('employee/orders.html', currorders=currorders) # make new orders.html file
+
+    # delivery views and manages open delivery orders
+    #change this to only include current/unclosed orders
+@app.route("/employee/open", methods=['GET', 'POST'])
+@login_required
+def open_orders():
+    currorders = Order.query.all()
+    return render_template('employee/deliveries.html', currorders=currorders) # make new orders.html file

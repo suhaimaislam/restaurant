@@ -1,0 +1,36 @@
+{% extends 'employee/delivery_navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+    <h2>Compliments and Complaints</h2>
+    <table id="data" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Filer</th>
+            <th>About</th>
+            <th>Type</th>
+            <th>Content</th>
+            <th>Date Filed</th>
+            <th>Status</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for complaint in complaintdata %}
+            <tr>
+              <td>{{ complaint.filer.username }}</td>
+              <td>{{ complaint.complainee.username }}</td>
+              <td>{{ complaint.type }}</td>
+              <td>{{ complaint.content }}</td>
+              <td>{{ complaint.date_filed }}</td>
+              <td>{{ complaint.status }}</td>
+              {% if complaint.type == "complaint" %}
+              <!-- change reviews function + form to dispute complaints -->
+              <td><a href="/delivery/reviews/{{complaint.id}}">Dispute</a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}
