@@ -41,6 +41,7 @@ class Employee(User):
 
     # Relationships
     dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic') # dishes made by chef
+    bids = db.relationship('Bids', back_populates='employees')
 
     __mapper_args__ = {'polymorphic_identity': 'employee'}
 
@@ -59,6 +60,7 @@ class Customer(User):
     dishes = db.relationship('Menu', back_populates='customer', lazy='dynamic') # dishes in cart
     foodreviews = db.relationship('FoodReview', back_populates='author', lazy='dynamic')
     orders = db.relationship('Order', back_populates='customer')
+    order_bids = db.relationship('Bids', back_populates='customer')
 
     __mapper_args__ = {'polymorphic_identity': 'customer'}
 
@@ -80,7 +82,7 @@ class Menu(db.Model):
 
     # Relationships
     reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
-    image = db.Column(db.String(500), nullable=False)
+    image = db.Column(db.String(500), nullable=True)
 
     chef_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
     chef = db.relationship('Employee', back_populates='dishes')
@@ -133,7 +135,7 @@ class Complaint(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    date_filed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_filed = db.Column(db.DateTime, nullable=False, default=datetime.now)
     type = db.Column(db.String, default="compliment")
     # add date updated
     complainee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -153,7 +155,7 @@ class Warning(db.Model):
     __tablename__ = "warnings"
 
     id = db.Column(db.Integer, primary_key=True)
-    date_received = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_received = db.Column(db.DateTime, nullable=False, default=datetime.now)
     content = db.Column(db.Text, nullable=False)    
 
     #Relationships
@@ -168,15 +170,31 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
     total = db.Column(db.Float)
     fees = db.Column(db.Float, default = 0.0)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    status = db.Column(db.String(30), default="open")
     quantity = db.Column(db.Integer)
 
     #Relationships
     customer = db.relationship('Customer', back_populates='orders')
     dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
+    bids = db.relationship('Bids', back_populates='orders', lazy='dynamic') # lazy?
 
     def __repr__(self):
         return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id})'
+
+class Bids(db.Model):
+    __tablename__ = "bids"
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    bidder = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
+    fee = db.Column(db.Float)
+
+    # Relationships
+    customer = db.relationship('Customer', back_populates='order_bids')
+    orders = db.relationship('Order', back_populates='bids')
+    employees = db.relationship('Employee', back_populates='bids')

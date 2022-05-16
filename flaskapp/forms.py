@@ -114,3 +114,8 @@ class AddToCart(FlaskForm):
 # form to place order
 class PlaceOrder(FlaskForm):
     submit = SubmitField('Place Order')
+
+# form for delivery bidding
+class OrderBidForm(FlaskForm):
+    bid = FloatField('Amount', validators=[DataRequired()])
+    submit = SubmitField('Submit')
