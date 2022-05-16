@@ -13,6 +13,8 @@
       <p>Status: {{ user.status }} Customer</p>
       <p>Balance: ${{ user.deposit }}</p>
       <small>Not enough money on your account?</small> <a href="{{ url_for('deposit_money') }}">Deposit Money</a>
+      <hr width="25%">
+
       {% if user.address %}
         <p>Address: {{ user.address }}</p>
         <small>Need to change your address?</small> <a href="{{ url_for('update_address') }}">Update Address</a>
@@ -26,24 +28,6 @@
             <div class="warning-item">
               <h6>Date: {{ warning.date_received }}</h6>
               <h6>Warning: {{ warning.content }}</h6>
-            </div>
-        {% endfor %}
-      {% endif %}
-
-      <hr>
-
-      <h3>Customer Orders</h3>
-      {% if orders is defined and orders.count() > 0%}
-        {% for order in orders %}
-            <div class="order-item">
-              <h6>Date: {{ order.date }}</h6>
-              <h6>Total: ${{ order.total }}</h6>
-              {% for dish in order.dishes %}
-                <a>Dish Name: {{ dish.name }}</a><br>
-                <a>Dish Description: {{ dish.description }}</a><br>
-                <a>Dish Price: {{ dish.price }}</a><br>
-                <br>
-              {% endfor %}
             </div>
         {% endfor %}
       {% endif %}

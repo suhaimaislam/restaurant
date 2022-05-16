@@ -12,6 +12,8 @@
             <th>Salary</th>
             <th>Rating</th>
             <th>Warnings</th>
+            <th>Demotions</th>
+            <th>Promotions</th>
             <th>Edit</th>
           </tr>
         </thead>
@@ -24,11 +26,15 @@
               <td>{{ employee.salary }}</td>
               <td>{{ employee.rating }}</td>
               <td>{{ employee.warnings|length }}</td>
-              {% if compliments|length>3 or employee.rating>2 %}
-                <td><a href="/admin/employees/{{employee.id}}">Edit</a> Needs to be Promoted</td>
-              {% else %}
+              <td>{{ employee.demotion }}</td>
+              <td>{{ employee.promotion }}</td>
+                {% if firemessages.get(employee.id) is defined %}
+                <td><a href="/admin/employees/{{employee.id}}">Edit</a> {{ firemessages.get(employee.id) }}</td>
+                {% elif messages.get(employee.id) is defined %}
+                <td><a href="/admin/employees/{{employee.id}}">Edit</a> {{ messages.get(employee.id) }}</td>
+                {% else %}
                 <td><a href="/admin/employees/{{employee.id}}">Edit</a></td>
-              {% endif %}
+                {% endif %}
             </tr>
           {% endfor %}
         </tbody>

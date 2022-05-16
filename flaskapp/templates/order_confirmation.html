@@ -4,3 +4,23 @@
 {% block head %}
 <title>Order Confirmation</title>
 {% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h1>Checkout Order</h1>
+    <h3>Date: {{ new_order.date }}</h3>
+    <h5>Delivery Type: {{ new_order.delivery_type }}</h5>
+    <h5>Address: {{ user.address }}</h5>
+    <h6>Subtotal: ${{ new_order.total }}</h6>
+    <h6>Delivery Fee: ${{ new_order.fees }}</h6>
+
+    <h6>Total: ${{ total }}</h6>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}
