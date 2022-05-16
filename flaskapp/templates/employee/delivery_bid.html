@@ -8,6 +8,32 @@
 {% block content %}
 
 <h2>Placing a bid on order # {{order_bid.id}} </h2>
-   
+<!-- Form for bidding on an order -->
+
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Bid on Order</legend>
+            <div class="form-group">
+                {{ form.bid.label(class="form-control-label") }}
+
+                {% if form.bid.errors %}
+                    {{ form.bid(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.bid.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.bid(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div> 
     
 {% endblock content %}
