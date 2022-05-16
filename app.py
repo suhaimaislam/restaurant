@@ -28,6 +28,7 @@ def build_sample_db():
 
     employee = [
         Employee(id=2, email="eugenef@gmail.com", username="Flynn Rider", password=bcrypt.generate_password_hash("letdownyourhair").decode('utf-8'), type="employee", position="delivery", salary=50000),
+        Employee(id=7, email="gspeed@gmail.com", username="George Speed", password=bcrypt.generate_password_hash("yellowranger").decode('utf-8'), type="employee", position="delivery", salary=40000),
         Employee(id=3, email="aladdin@gmail.com", username="Aladdin", password=bcrypt.generate_password_hash("magiccarpet").decode('utf-8'), type="employee", position="chef", salary=75000),
         Employee(id=6, email="naveen@gmail.com", username="Prince Naveen", password=bcrypt.generate_password_hash("frog").decode('utf-8'), type="employee", position="chef", salary=70000),
     ]
@@ -57,12 +58,12 @@ def build_sample_db():
     ]
 
     orders = [
-        Order(id = 1, date = datetime(2022, 5, 14, 15, 36, 26, 863258), total = 26.0, fees = 0, customer_id = 4, status = "open", quantity = None),
-        Order(id = 2, date = datetime(2022, 5, 14, 15, 36, 46, 544075), total = 54.0, fees = 0, customer_id = 4, status = "open", quantity = None),
-        Order(id = 3, date = datetime(2022, 5, 14, 15, 36, 51, 446025), total = 9.0, fees = 0, customer_id= 4, status = "open", quantity = None),
-        Order(id = 4, date = datetime(2022, 5, 14, 15, 37, 21, 421083), total = 34.0, fees = 0, customer_id = 4, status = "open", quantity = None),
-        Order(id = 5, date = datetime(2022, 5, 14, 15, 39, 13, 193241), total = 42.75, fees = 0,customer_id = 5, status = "open", quantity = None),
-        Order(id = 6, date = datetime(2022, 5, 14, 15, 39, 18, 94277), total = 8.075, fees = 0, customer_id = 5, status = "open", quantity = None)
+        Order(id = 1, date = datetime(2022, 5, 14, 15, 36, 26, 863258), total = 26.0, fees = 0, customer_id = 4, customer_name = "Mark Twain", status = "open", quantity = None,  ),
+        Order(id = 2, date = datetime(2022, 5, 14, 15, 36, 46, 544075), total = 54.0, fees = 0, customer_id = 4, status = "open", quantity = None, customer_name = "Mark Twain"),
+        Order(id = 3, date = datetime(2022, 5, 14, 15, 36, 51, 446025), total = 9.0, fees = 0, customer_id= 4, status = "open", quantity = None, customer_name = "Mark Twain"),
+        Order(id = 4, date = datetime(2022, 5, 14, 15, 37, 21, 421083), total = 34.0, fees = 0, customer_id = 4, status = "open", quantity = None, customer_name = "Mark Twain"),
+        Order(id = 5, date = datetime(2022, 5, 14, 15, 39, 13, 193241), total = 42.7589, fees = 0,customer_id = 5, status = "open", quantity = None, customer_name = "Charles Dickens"),
+        Order(id = 6, date = datetime(2022, 5, 14, 15, 39, 18, 94277), total = 8.7258, fees = 0, customer_id = 5, status = "open", quantity = None, customer_name = "Charles Dickens")
     ]
 
     db.session.add_all(menu)

@@ -111,9 +111,13 @@ class AddToCart(FlaskForm):
     # quantity = IntegerField('Quantity', default=1, validators=[DataRequired()])
     submit = SubmitField('Add To Cart')
 
-# form to place order
+# form to place order for pickup
 class PlaceOrder(FlaskForm):
-    submit = SubmitField('Place Order')
+    submit = SubmitField('Pick Up')
+
+# form to place order for delivery
+class PlaceDelivery(FlaskForm):
+    submit = SubmitField('Delivery')
 
 # form for delivery bidding
 class OrderBidForm(FlaskForm):

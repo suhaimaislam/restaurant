@@ -48,6 +48,51 @@
             {% block content %}
             {% endblock %}
             <hr/>
+
+            <!-- styling for flash messages -->
+            <style>
+                .alert {
+                    padding: 12px;
+                    border-radius: 3px;
+                    border-width: 2px;
+                    border-style: solid;
+                    font-size: 1.2rem;
+                    text-align:center;
+                    width: 20em; 
+                    margin: 16px auto 16px;
+                    
+                }
+
+                .alert-danger {
+                    border-color: rgb(184, 37, 37);
+                    background-color: rgb(255, 69, 69);
+                    color: white;
+                }
+
+                .alert-info {
+                    border-color: orange;
+                    background-color: yellow;
+                    color: black;
+                }
+
+                .alert-success {
+                    border-color: #409439;
+                    background-color: #83b783;
+                    color: #ffffff;
+                }
+            </style>
+
+
+            <!-- displays the deposit confirmation flash at the bottom of screen -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+              
+                    {% for category, message in messages %}
+                    <div class = "alert alert-{{category}}">{{ message }}</div>
+                    {% endfor %}
+                  
+                {% endif %}
+            {% endwith %}
     
             <!-- Footer -->
             <div class="footer-basic">

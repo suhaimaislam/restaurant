@@ -30,7 +30,7 @@
             <div id="complaint_item">
                 <h5>About: {{ complaint.complainee.username }}</h5>
                 <h6>By: {{ complaint.filer.username }}</h6>
-                <p>Date: {{ complaint.date_filed }}</p>
+                <p>Date: {{ complaint.date_filed.strftime('%m-%d-%Y | %I:%M:%S %p') }}</p>
                 <p>{{ complaint.content }}</p>
                 <p>Employee Rating: {{ complaint.complainee.rating }}</p>
             </div>

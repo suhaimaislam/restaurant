@@ -24,7 +24,7 @@
       {% if warnings is defined and warnings.count() > 0%}
         {% for warning in warnings %}
             <div class="warning-item">
-              <h6>Date: {{ warning.date_received }}</h6>
+              <h6>Date: {{ warning.date_received.strftime('%m-%d-%Y | %I:%M:%S %p') }}</h6>
               <h6>Warning: {{ warning.content }}</h6>
             </div>
         {% endfor %}
@@ -36,7 +36,7 @@
       {% if orders is defined and orders.count() > 0%}
         {% for order in orders %}
             <div class="order-item">
-              <h6>Date: {{ order.date }}</h6>
+              <h6>Date: {{ order.date.strftime('%m-%d-%Y | %I:%M:%S %p') }}</h6>
               <h6>Total: ${{ order.total }}</h6>
               {% for dish in order.dishes %}
                 <a>Dish Name: {{ dish.name }}</a><br>

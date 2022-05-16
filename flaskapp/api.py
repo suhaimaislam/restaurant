@@ -6,6 +6,7 @@ from flaskapp.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import desc, func
+from itertools import chain
 
 def require_role(role):
     """make sure user has this role"""
@@ -207,11 +208,11 @@ def cart():
 
                 
 
-                new_order = Order(total=subtotal, dishes=cart, fees = fee, customer_id=current_user.id)
+                new_order = Order(total=subtotal, dishes=cart, fees = fee, customer_id=current_user.id, customer_name = current_user.username, status = "open")
                 curr.deposit -= subtotal
 
                 cart = curr.dishes
-                for item in cart: #reset item quantitie to 0 after order is placed
+                for item in cart: #reset item quantity to 0 after order is placed
                     item.quantity = 0
 
                 curr.dishes = []
@@ -244,7 +245,7 @@ def cart():
                 
                 db.session.commit()
                 # print(db.session.query(Customer.id, Customer.deposit, Customer.status).all())
-                return redirect(url_for('home')) 
+                return redirect(url_for('profile')) 
 
             elif subtotal > curr.deposit: # issues warning and does not order if order total > customer account deposit
                 new_warning = Warning(content="Order total exceed account deposit", user_id=current_user.id)
@@ -253,7 +254,7 @@ def cart():
                 return redirect(url_for('profile')) 
         return render_template('cart.html', cart=cart, subtotal=subtotal, form=form, fees = fee, total = total)
     else:
-        return render_template('index.html')
+        return render_template('cart.html')
 
 # menu page for customers
 @app.route('/menu', methods=['GET'])
@@ -398,7 +399,7 @@ def admin_add_menu():
         db.session.add(new_dish)
         db.session.commit()
         flash('Your dish has been created!', 'success')
-        return redirect(url_for('admin_menu'))
+        # return redirect(url_for('admin_menu'))
     return render_template('admin/add_menu.html', form=form)
 
 
@@ -490,15 +491,56 @@ def open_orders():
     return render_template('employee/deliveries.html', currorders=currorders) # make new orders.html file
 
 
-    # delivery bid on orders
+    # delivery employees bid on orders
 @app.route('/delivery/bid/<int:id>', methods=['GET', 'POST'])
 @login_required
 def order_bid(id):
-    order = Order.query.get(id)
-    form = OrderBidForm()
-
-    if current_user.is_authenticated and current_user.type=="delivery":
-        message = f'You are viewing order # {order}!' #may notneed
-        flash(message, 'success')
-
+    if current_user.is_authenticated and current_user.position=="delivery":
+        order = Order.query.get(id)
+        form = OrderBidForm()
+        if form.validate_on_submit():
+            dec_total = float(order.total)
+            new_bid = Bids(order_id = order.id,customer_id = order.customer_id, bidder = current_user.id, fee = form.bid.data, customer_name = order.customer_name, new_subtotal = dec_total + form.bid.data, bidder_name = current_user.username)
+            db.session.add(new_bid)
+            db.session.commit()
+            print("THIS WORKED\n\n")
+            
+            #for loop to test addition of bids
+            for item in Bids.query.all():
+                cust = Customer.query.get(item.customer_id)
+                print(f'{item.id}, order: {item.order_id}, customer: {item.customer_id}, name: {cust.username} bidder: {item.bidder}, fee: {item.fee}')
+            flash(f'Your bid of ${form.bid.data} for order #{order.id} is complete!', 'success')
     return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order, form = form)
+
+    # admin view current bids
+@app.route('/admin/bid/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_bid(id):
+    if current_user.is_authenticated and current_user.position=="manager":
+        bids = Bids.query.filter_by(order_id = id)
+        ord_num = id
+        #query returns the fee and id of the lowest bid as a tuple (fee, id)
+        minbid = db.session.query(func.min(Bids.fee), Bids.id).filter_by(order_id = id)
+        min_val = list(chain(*minbid)) #turns the tuple result into a list 
+        #returns the row with the first lowest bidding value
+        low = Bids.query.filter_by(id = min_val[1]).first()
+        #sets the ranking value to Lowest for display in the Bids table
+        low.ranking = "Lowest"
+        db.session.commit()
+        
+    return render_template('/admin/approve_bid.html', title='Add Bid', bids = bids, num = ord_num)
+
+# admin approve lowest bid
+@app.route('/admin/select_bid/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_select_bid(id):
+    if current_user.is_authenticated and current_user.position=="manager":
+        this = id
+        bid = Bids.query.filter_by(id = this).first()
+        new_fee = bid.fee
+        ordernum = bid.order_id
+        order = Order.query.get(ordernum)
+        order.fees = new_fee
+        db.session.commit()
+        # return redirect(url_for('admin_orders'))
+    return render_template('/admin/bid_selected.html', bids = bid, num = ordernum)
