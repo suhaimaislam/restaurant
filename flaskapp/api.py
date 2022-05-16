@@ -537,11 +537,10 @@ def open_orders():
 @login_required
 def order_bid(id):
     order = Order.query.get(id)
-    message = f'You are viewing order # {order}!'
-    flash(message, 'success')
+    form = OrderBidForm()
 
     if current_user.is_authenticated and current_user.type=="delivery":
         message = f'You are viewing order # {order}!' #may notneed
         flash(message, 'success')
 
-    return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order)
+    return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order, form = form)
