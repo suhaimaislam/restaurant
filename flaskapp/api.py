@@ -205,6 +205,8 @@ def cart():
                 if curr.status == 'VIP': # 5% discount if customer is VIP
                     subtotal *= 0.95
 
+                
+
                 new_order = Order(total=subtotal, dishes=cart, fees = fee, customer_id=current_user.id)
                 curr.deposit -= subtotal
 
@@ -486,3 +488,18 @@ def delivery_orders():
 def open_orders():
     currorders = Order.query.all()
     return render_template('employee/deliveries.html', currorders=currorders) # make new orders.html file
+
+
+    # delivery bid on orders
+@app.route('/delivery/bid/<int:id>', methods=['GET', 'POST'])
+@login_required
+def order_bid(id):
+    order = Order.query.get(id)
+    message = f'You are viewing order # {order}!'
+    flash(message, 'success')
+
+    if current_user.is_authenticated and current_user.type=="delivery":
+        message = f'You are viewing order # {order}!' #may notneed
+        flash(message, 'success')
+
+    return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order)

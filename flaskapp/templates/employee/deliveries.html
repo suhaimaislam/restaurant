@@ -14,7 +14,8 @@
             <th>Total</th>
             <th>Fees</th>
             <th>Customer</th>
-            <th>Quantity</th>
+            <th>Status</th>
+            <th>Bid</th>
           </tr>
         </thead>
         <tbody>
@@ -25,7 +26,10 @@
               <td>{{ order.total }}</td>
               <td>{{ order.fees }}</td>
               <td>{{ order.customer_id }}</td>
-              <td>{{ order.quantity }}</td>
+              <td>{{ order.status }}</td>
+              {% if order.status == "open" %}
+              <td><a href="/delivery/bid/{{order.id}}">Bid</a></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
