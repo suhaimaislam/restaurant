@@ -26,7 +26,7 @@
       {% if warnings is defined and warnings.count() > 0%}
         {% for warning in warnings %}
             <div class="warning-item">
-              <h6>Date: {{ warning.date_received }}</h6>
+              <h6>Date: {{ warning.date_received.strftime('%m-%d-%Y | %I:%M:%S %p') }}</h6>
               <h6>Warning: {{ warning.content }}</h6>
             </div>
         {% endfor %}

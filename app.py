@@ -28,6 +28,7 @@ def build_sample_db():
 
     employee = [
         Employee(id=2, email="eugenef@gmail.com", username="Flynn Rider", password=bcrypt.generate_password_hash("letdownyourhair").decode('utf-8'), type="employee", position="delivery", salary=50000),
+        Employee(id=7, email="gspeed@gmail.com", username="George Speed", password=bcrypt.generate_password_hash("yellowranger").decode('utf-8'), type="employee", position="delivery", salary=40000),
         Employee(id=3, email="aladdin@gmail.com", username="Aladdin", password=bcrypt.generate_password_hash("magiccarpet").decode('utf-8'), type="employee", position="chef", salary=75000),
         Employee(id=6, email="naveen@gmail.com", username="Prince Naveen", password=bcrypt.generate_password_hash("frog").decode('utf-8'), type="employee", position="chef", salary=70000),
     ]

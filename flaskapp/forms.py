@@ -117,7 +117,11 @@ class Checkout(FlaskForm):
 
 # form to place order
 class PlaceOrder(FlaskForm):
-    submit = SubmitField('Place Order')
+    submit = SubmitField('Pick Up')
+
+# form to place order for delivery
+class PlaceDelivery(FlaskForm):
+    submit = SubmitField('Delivery')
 
 # form for delivery bidding
 class OrderBidForm(FlaskForm):

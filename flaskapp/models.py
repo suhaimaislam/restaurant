@@ -36,7 +36,7 @@ class Employee(User):
 
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     position = db.Column(db.String(50))
-    salary = db.Column(db.Float)
+    salary = db.Column(db.Numeric(10,2))
     rating = db.Column(db.Float, default=5.0)
     demotion = db.Column(db.Integer, default=0)
     promotion = db.Column(db.Integer, default=0)
@@ -56,7 +56,7 @@ class Customer(User):
       
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(30), default="Registered")
-    deposit = db.Column(db.Float, default=0.0)
+    deposit = db.Column(db.Float(), default=0.0)
 
     # Relationships
     dishes = db.relationship('Menu', back_populates='customer', lazy='dynamic') # dishes in cart
@@ -174,8 +174,10 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    total = db.Column(db.Float)
-    fees = db.Column(db.Float, default = 0.0)
+    total = db.Column(db.Numeric(10,2), default = 0.00)
+    fees = db.Column(db.Numeric(10,2), default = 0.00)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_name = db.Column(db.String(30))
     status = db.Column(db.String(30), default="open")
     # quantity = db.Column(db.Integer)
     delivery_type = db.Column(db.String(20), nullable=False)
@@ -184,7 +186,7 @@ class Order(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     customer = db.relationship('Customer', back_populates='orders')
     dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
-    bids = db.relationship('Bids', back_populates='orders', lazy='dynamic') # lazy?
+    bids = db.relationship('Bids', back_populates='orders', lazy='dynamic')
 
     def __repr__(self):
         return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id}, {self.delivery_type})'
@@ -196,7 +198,11 @@ class Bids(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     bidder = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
-    fee = db.Column(db.Float)
+    bidder_name = db.Column(db.String(30))
+    fee = db.Column(db.Float, default = 0.00)
+    customer_name = db.Column(db.String(30))
+    new_subtotal = db.Column(db.Numeric(10,2), default = 0.00)
+    ranking = db.Column(db.String(30), default = " ")
 
     # Relationships
     customer = db.relationship('Customer', back_populates='order_bids')

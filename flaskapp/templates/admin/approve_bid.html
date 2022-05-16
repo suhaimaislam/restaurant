@@ -1,0 +1,33 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+      <h2>Current Bids for Order #{{num}}</h2>
+
+      <table id="data" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Bid #</th>
+            <th>Bidder</th>
+            <th>Bid Amount</th>
+            <th>Subtotal</th>
+            <th>Lowest</th>
+            <th>Select</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in bids %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.bidder_name }}</td>
+                <td>${{item.fee }}</td>
+                <td>${{item.new_subtotal }}</td>
+                <td>{{item.ranking}}</td>
+                <td><a href="/admin/select_bid/{{item.id}}">Select Bid</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+{% endblock %}
