@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+<!-- Orders Page -->
+{% block head %}
+<title>Orders</title>
+{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h3>Customer Orders</h3>
+    <hr>
+    {% if orders is defined and orders.count() > 0%}
+      {% for order in orders %}
+          <div class="order-item">
+            <h6>Date: {{ order.date }}</h6>
+            <h6>Delivery Type: {{ order.delivery_type }}</h6>
+            <h6>Subtotal: ${{ order.total }}</h6>
+            <h6>Delivery Fee: ${{ order.fees }}</h6>
+            {% for dish in order.dishes %}
+              <a>Dish Name: {{ dish.name }}</a><br>
+              <a>Dish Description: {{ dish.description }}</a><br>
+              <a>Dish Price: {{ dish.price }}</a><br>
+              <br>
+            {% endfor %}
+          </div>
+          <hr width="50%">
+      {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

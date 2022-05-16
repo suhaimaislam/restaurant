@@ -16,15 +16,26 @@
     <hr width="50%">
     {% endfor %}
 
-    <p>Subtotal: $ {{ subtotal }}</p>
-    <p>Delivery Fee: {{ fees }}$</p>
-    <hr width="50%">
-    <p>Order Total: {{ total }} $</p>
-
-
+    <p>Subtotal: ${{ subtotal }}</p>
 
     <form method="POST" action="">
         {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ form.delivery_type.label(class="form-control-label") }}
+
+                {% if form.delivery_type.errors %}
+                {{ form.delivery_type(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.delivery_type.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.delivery_type(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>

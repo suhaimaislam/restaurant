@@ -25,7 +25,9 @@
                             <a href="/menu" class="nav-item nav-link" data-bs-toggle="dropdown">Menu</a>
                         </div>
                         <a href="/discussion" class="nav-item nav-link">Reviews</a>
-                        <a href="#" class="nav-item nav-link">Contact</a>
+                        {% if current_user.is_authenticated %}
+                        <a href="/orders" class="nav-item nav-link">Orders</a>
+                        {% endif %}
                     </div>
                     <form class="d-flex">
                         <div class="input-group">                    

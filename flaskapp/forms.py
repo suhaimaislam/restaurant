@@ -17,7 +17,6 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     street = StringField('Mailing Address', validators=[DataRequired()])
-    apt = StringField('Apt/Suite/Floor', validators=[DataRequired()]) # <-- changed to StringField
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = IntegerField('Zipcode', validators=[DataRequired()])
@@ -44,7 +43,6 @@ class LoginForm(FlaskForm):
 # form for user to change address
 class AddressForm(FlaskForm):
     street = StringField('Mailing Address', validators=[DataRequired()])
-    apt = StringField('Apt/Suite/Floor', validators=[DataRequired()]) # <-- changed to StringField
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = IntegerField('Zipcode', validators=[DataRequired()])
@@ -83,6 +81,7 @@ class AddMenuForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     price = FloatField('Price', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
+    image = StringField('Image Link', validators=[DataRequired()])
     category = SelectField('Category', choices = [('0', '-- select an option --'), ('breakfast', 'breakfast'), ('lunch', 'lunch'), ('dinner', 'dinner')], validators=[DataRequired()])
     chef = SelectField('Chef', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Add')
@@ -111,7 +110,12 @@ class AddToCart(FlaskForm):
     # quantity = IntegerField('Quantity', default=1, validators=[DataRequired()])
     submit = SubmitField('Add To Cart')
 
-# form to place order for pickup
+# form to proceed to checkout
+class Checkout(FlaskForm):
+    delivery_type = SelectField('Delivery Options', choices=[('0', '-- select an option --'), ('Pickup in-person', 'Pickup in-person'), ('Deliver to address', 'Deliver to address')], validators=[DataRequired()])
+    submit = SubmitField('Checkout')
+
+# form to place order
 class PlaceOrder(FlaskForm):
     submit = SubmitField('Pick Up')
 

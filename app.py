@@ -34,8 +34,8 @@ def build_sample_db():
     ]
 
     customer = [
-        Customer(id=4, email="twainM@gmail.com", username="Mark Twain", password=bcrypt.generate_password_hash("TomSawyer"), type="customer", status="Registered"),
-        Customer(id=5, email="dickensC@yahoo.com", username="Charles Dickens", password=bcrypt.generate_password_hash("2Cities"), type="customer", status="VIP"),
+        Customer(id=4, email="twainM@gmail.com", username="Mark Twain", password=bcrypt.generate_password_hash("TomSawyer"), address = "1000 Test St New York, NY 11111", type="customer", status="Registered"),
+        Customer(id=5, email="dickensC@yahoo.com", username="Charles Dickens", password=bcrypt.generate_password_hash("2Cities"), address = "1234 Liberty Ave New York, NY 98765", type="customer", status="VIP"),
     ]
 
     menu = [
@@ -57,21 +57,21 @@ def build_sample_db():
         Complaint(id=8, content="very rude customer", type="complaint", complainee_id=6, filer_id=4)
     ]
 
-    orders = [
-        Order(id = 1, date = datetime(2022, 5, 14, 15, 36, 26, 863258), total = 26.0, fees = 0, customer_id = 4, customer_name = "Mark Twain", status = "open", quantity = None,  ),
-        Order(id = 2, date = datetime(2022, 5, 14, 15, 36, 46, 544075), total = 54.0, fees = 0, customer_id = 4, status = "open", quantity = None, customer_name = "Mark Twain"),
-        Order(id = 3, date = datetime(2022, 5, 14, 15, 36, 51, 446025), total = 9.0, fees = 0, customer_id= 4, status = "open", quantity = None, customer_name = "Mark Twain"),
-        Order(id = 4, date = datetime(2022, 5, 14, 15, 37, 21, 421083), total = 34.0, fees = 0, customer_id = 4, status = "open", quantity = None, customer_name = "Mark Twain"),
-        Order(id = 5, date = datetime(2022, 5, 14, 15, 39, 13, 193241), total = 42.7589, fees = 0,customer_id = 5, status = "open", quantity = None, customer_name = "Charles Dickens"),
-        Order(id = 6, date = datetime(2022, 5, 14, 15, 39, 18, 94277), total = 8.7258, fees = 0, customer_id = 5, status = "open", quantity = None, customer_name = "Charles Dickens")
-    ]
+    # orders = [
+    #     Order(id = 1, date = datetime(2022, 5, 14, 15, 36, 26, 863258), total = 26.0, fees = 0, customer_id = 4, status = "open", quantity = None),
+    #     Order(id = 2, date = datetime(2022, 5, 14, 15, 36, 46, 544075), total = 54.0, fees = 0, customer_id = 4, status = "open", quantity = None),
+    #     Order(id = 3, date = datetime(2022, 5, 14, 15, 36, 51, 446025), total = 9.0, fees = 0, customer_id= 4, status = "open", quantity = None),
+    #     Order(id = 4, date = datetime(2022, 5, 14, 15, 37, 21, 421083), total = 34.0, fees = 0, customer_id = 4, status = "open", quantity = None),
+    #     Order(id = 5, date = datetime(2022, 5, 14, 15, 39, 13, 193241), total = 42.75, fees = 0,customer_id = 5, status = "open", quantity = None),
+    #     Order(id = 6, date = datetime(2022, 5, 14, 15, 39, 18, 94277), total = 8.075, fees = 0, customer_id = 5, status = "open", quantity = None)
+    # ]
 
     db.session.add_all(menu)
     db.session.add_all(employee)
     db.session.add_all(customer)
     db.session.add_all(complaint)
     db.session.add(test_admin)
-    db.session.add_all(orders)
+    # db.session.add_all(orders)
     db.session.commit()
 
     print("Completed!")

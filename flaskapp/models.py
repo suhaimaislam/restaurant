@@ -38,6 +38,8 @@ class Employee(User):
     position = db.Column(db.String(50))
     salary = db.Column(db.Numeric(10,2))
     rating = db.Column(db.Float, default=5.0)
+    demotion = db.Column(db.Integer, default=0)
+    promotion = db.Column(db.Integer, default=0)
 
     # Relationships
     dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic') # dishes made by chef
@@ -79,6 +81,7 @@ class Menu(db.Model):
     rating = db.Column(db.Float, nullable=False, default=5.0)
     approved = db.Column(db.Boolean, default=False)
     quantity = db.Column(db.Integer, default = 0)
+    counter = db.Column(db.Integer, default=0) # number of items dish was ordered 
 
     # Relationships
     reviews = db.relationship('FoodReview', back_populates='dish', lazy='dynamic')
@@ -176,15 +179,17 @@ class Order(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     customer_name = db.Column(db.String(30))
     status = db.Column(db.String(30), default="open")
-    quantity = db.Column(db.Integer)
+    # quantity = db.Column(db.Integer)
+    delivery_type = db.Column(db.String(20), nullable=False)
 
     #Relationships
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     customer = db.relationship('Customer', back_populates='orders')
     dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
     bids = db.relationship('Bids', back_populates='orders', lazy='dynamic')
 
     def __repr__(self):
-        return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id})'
+        return f'Warning({self.date}, {self.total}, {self.dishes}, {self.customer_id}, {self.delivery_type})'
 
 class Bids(db.Model):
     __tablename__ = "bids"
