@@ -36,13 +36,14 @@ class Employee(User):
 
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     position = db.Column(db.String(50))
-    salary = db.Column(db.Numeric(10,2))
+    salary = db.Column(db.Float)
     rating = db.Column(db.Float, default=5.0)
     demotion = db.Column(db.Integer, default=0)
     promotion = db.Column(db.Integer, default=0)
 
     # Relationships
     dishes = db.relationship('Menu', back_populates='chef', lazy='dynamic') # dishes made by chef
+    orders = db.relationship('Order', back_populates='delivery_person') # orders delivered by delivery person
     bids = db.relationship('Bids', back_populates='employees')
 
     __mapper_args__ = {'polymorphic_identity': 'employee'}
@@ -56,7 +57,8 @@ class Customer(User):
       
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(30), default="Registered")
-    deposit = db.Column(db.Float(), default=0.0)
+    deposit = db.Column(db.Float, default=0.0)
+    close_account = db.Column(db.Boolean, default=False)
 
     # Relationships
     dishes = db.relationship('Menu', back_populates='customer', lazy='dynamic') # dishes in cart
@@ -67,7 +69,18 @@ class Customer(User):
     __mapper_args__ = {'polymorphic_identity': 'customer'}
 
     def __repr__(self):
-        return f'Employee({self.username}, {self.email}, {self.status}, {self.deposit})'
+        return f'Customer({self.username}, {self.email}, {self.status}, {self.deposit}, {self.close_account})'
+
+# blacklist model (for users kicked out of system)
+class Blacklist(db.Model, UserMixin):
+    __tablename__ = "blacklists"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(30), unique=True, nullable=False)
+    date_blacklisted = db.Column(db.DateTime, nullable=False,  default=datetime.now)
+
+    def __repr__(self):
+        return f'Blacklist({self.email})'
     
 # menu model
 class Menu(db.Model):
@@ -174,10 +187,8 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    total = db.Column(db.Numeric(10,2), default = 0.00)
-    fees = db.Column(db.Numeric(10,2), default = 0.00)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
-    customer_name = db.Column(db.String(30))
+    total = db.Column(db.Float, default = 0.0)
+    fees = db.Column(db.Float, default = 0.0)
     status = db.Column(db.String(30), default="open")
     # quantity = db.Column(db.Integer)
     delivery_type = db.Column(db.String(20), nullable=False)
@@ -185,6 +196,10 @@ class Order(db.Model):
     #Relationships
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     customer = db.relationship('Customer', back_populates='orders')
+
+    delivery_id = db.Column(db.Integer, db.ForeignKey('employees.id'))
+    delivery_person = db.relationship('Employee', back_populates='orders')
+
     dishes = db.relationship('Menu', back_populates='order', lazy='dynamic')
     bids = db.relationship('Bids', back_populates='orders', lazy='dynamic')
 
@@ -201,7 +216,7 @@ class Bids(db.Model):
     bidder_name = db.Column(db.String(30))
     fee = db.Column(db.Float, default = 0.00)
     customer_name = db.Column(db.String(30))
-    new_subtotal = db.Column(db.Numeric(10,2), default = 0.00)
+    new_subtotal = db.Column(db.Float, default = 0.0)
     ranking = db.Column(db.String(30), default = " ")
 
     # Relationships

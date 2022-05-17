@@ -12,8 +12,25 @@
     <h6>RATING: {{ dish.rating }}</h6>
     <h6>DESCRIPTION: {{ dish.description }}</h6>
     <h6>CHEF: {{ dish.chef.username }}</h6>
+    
     <form method="POST" action="">
         {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ form.quantity.label(class="form-control-label") }}
+
+                {% if form.quantity.errors %}
+                {{ form.quantity(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.quantity.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.quantity(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>

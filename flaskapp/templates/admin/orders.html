@@ -11,6 +11,8 @@
             <th>Total</th>
             <th>Fees</th>
             <th>Customer</th>
+            <th>Delivery Type</th>
+            <th>Delivery Person</th>
             <th>Status</th>
             <th>Bids</th>
           </tr>
@@ -22,7 +24,9 @@
               <td>{{ order.date.strftime('%m-%d-%Y | %I:%M:%S %p') }}</td>
               <td>${{ order.total }}</td>
               <td>${{ order.fees }}</td>
-              <td>{{ order.customer_name }}</td>
+              <td>{{ order.customer.username }}</td>
+              <td>{{ order.delivery_type }}</td>
+              <td>{{ order.delivery_person.username }}</td>
               <td>{{ order.status }}</td>
               {% if order.status == "open" %}
               <td><a href="/admin/bid/{{order.id}}">Assign Bid</a></td>

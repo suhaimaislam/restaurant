@@ -26,7 +26,13 @@ def require_role(role):
 def home():
     random_dishes = Menu.query.order_by(desc(Menu.price))
     if current_user.is_authenticated:
+        user = Customer.query.get(current_user.id)
         warnings = Warning.query.filter_by(user_id=current_user.id)
+        if warnings.count()==2 and user.status=="VIP":
+            user.status="Registered"
+            Warning.query.filter_by(user_id=current_user.id).delete()
+            db.session.commit()
+            flash('You have been demoted from VIP to registered customer! All warnings on account have been cleared', 'danger')
         return render_template('index.html', warnings=warnings, random_dishes=random_dishes)
     else:
         highest_rated = Menu.query.order_by(desc(Menu.rating))
@@ -66,7 +72,7 @@ def login():
         user = Customer.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('profile'))
+            return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -86,7 +92,6 @@ def employee_login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('employee_login.html', title='Login', form=form)
 
-
 # logout page 
 @app.route("/logout")
 def logout():
@@ -94,17 +99,24 @@ def logout():
     return redirect(url_for('home'))
 
 # profile page for employees and customers
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
     if current_user.is_authenticated:
         warnings = Warning.query.filter_by(user_id=current_user.id)
         orders = Order.query.filter_by(customer_id=current_user.id)
-    if current_user.is_authenticated and current_user.type=="customer":
-        user = Customer.query.filter_by(id=current_user.id).first()
+    if current_user.type=="customer":
+        user = Customer.query.get(current_user.id)
         status = user.status
         deposit = user.deposit
         address = user.address
+
+        form = QuitForm()
+        if form.validate_on_submit():
+            user.close_account = form.quit.data
+            db.session.commit()
+            flash('Manager will clear your deposit and close your account.', 'success')
+            return redirect(url_for('home'))
 
         return render_template('profile.html',
                                 user=user, 
@@ -112,8 +124,9 @@ def profile():
                                 deposit=deposit,
                                 address=address,
                                 warnings=warnings,
-                                orders=orders)
-    elif current_user.is_authenticated and current_user.position=="manager":
+                                orders=orders,
+                                form=form)
+    elif current_user.position=="manager":
         user = Employee.query.filter_by(id=current_user.id).first()
         position = user.position
         salary = user.salary
@@ -124,7 +137,7 @@ def profile():
                                 salary=salary,
                                 warnings=warnings, 
                                 orders=orders)
-    elif current_user.is_authenticated and current_user.position=="delivery":
+    elif current_user.position=="delivery":
         user = Employee.query.filter_by(id = current_user.id).first()
         position = user.position
         salary = user.salary
@@ -138,7 +151,7 @@ def profile():
                                 orders=orders,
                                 rating=rating)
 
-    elif current_user.is_authenticated and current_user.position=="chef":
+    elif current_user.position=="chef":
         user = Employee.query.filter_by(id = current_user.id).first()
         position = user.position
         salary = user.salary
@@ -184,6 +197,7 @@ def deposit_money():
 
 # cart page for customers
 @app.route('/cart', methods=['GET', 'POST'])
+@login_required
 def cart():
     if current_user.is_authenticated:
         curr = Customer.query.get(current_user.id)
@@ -220,7 +234,7 @@ def cart():
 
         return render_template('cart.html', cart=cart, subtotal=subtotal, form=form)
     else:
-        return render_template('cart.html')
+        return render_template('login.html')
 
 # place order 
 @app.route("/checkout/<int:id>", methods=['GET', 'POST'])
@@ -250,19 +264,19 @@ def checkout(id):
         
         outstanding = True # check if customer has outstanding complaints
         for complaint in Complaint.query.filter_by(complainee_id=current_user.id):
-            if complaint.type == 'complaint' and complaint.status != 'open':
+            if complaint.type == 'complaint' and complaint.status != 'warning to complainee':
                 outstanding = False
-            elif complaint.type == 'complaint' and complaint.status == 'open':
+            else:
                 outstanding = True
         for complaint in Complaint.query.filter_by(filer_id=current_user.id):
-            if complaint.type == 'complaint' and complaint.status != 'open':
+            if complaint.type == 'complaint' and complaint.status != 'warning to filer':
                 outstanding = False
-            elif complaint.type == 'complaint' and complaint.status == 'open':
+            else:
                 outstanding = True
         
         # makes customer status a VIP if customer has placed more than 5 orders
         # and either spent more than $100 or has no outstanding complaints
-        if len(curr.orders) > 5 and (history > 100 or outstanding is False):
+        if len(curr.orders) > 5 or (history > 100 and outstanding is False):
             curr.status = "VIP"
 
         db.session.commit()
@@ -285,7 +299,7 @@ def add_cart(id):
         customer = Customer.query.get(current_user.id)
         form=AddToCart()
         if form.validate_on_submit():
-            dish.quantity += 1
+            dish.quantity += form.quantity.data
             customer.dishes.append(dish)
             db.session.commit()
             return redirect(url_for('cart'))
@@ -542,7 +556,7 @@ def order_bid(id):
         form = OrderBidForm()
         if form.validate_on_submit():
             dec_total = float(order.total)
-            new_bid = Bids(order_id = order.id,customer_id = order.customer_id, bidder = current_user.id, fee = form.bid.data, customer_name = order.customer_name, new_subtotal = dec_total + form.bid.data, bidder_name = current_user.username)
+            new_bid = Bids(order_id = order.id,customer_id = order.customer_id, bidder = current_user.id, fee = form.bid.data, customer_name = order.customer.username, new_subtotal = dec_total + form.bid.data, bidder_name = current_user.username)
             db.session.add(new_bid)
             db.session.commit()
             print("THIS WORKED\n\n")
@@ -582,7 +596,32 @@ def admin_select_bid(id):
         new_fee = bid.fee
         ordernum = bid.order_id
         order = Order.query.get(ordernum)
+        order.delivery_id=bid.bidder
         order.fees = new_fee
         db.session.commit()
         # return redirect(url_for('admin_orders'))
     return render_template('/admin/bid_selected.html', bids = bid, num = ordernum)
+
+# manager handles customers 
+@app.route("/admin/customers", methods=['GET', 'POST'])
+@login_required
+@require_role("manager")
+def admin_customers():
+    customerdata = Customer.query.all()
+    return render_template('admin/customers.html', customerdata=customerdata)
+
+# admin edits customer information
+@app.route("/admin/customers/<int:id>", methods=['GET', 'POST'])
+@login_required
+@require_role("manager")
+def admin_update_customer(id):
+    customer = Customer.query.get(id)
+    form = UpdateCustomerForm()
+    if form.validate_on_submit():
+        if form.active.data is True:
+            blacklisted = Blacklist(email=customer.email)
+            Customer.query.filter_by(id=id).delete()
+            db.session.add(blacklisted)
+            db.session.commit()
+        return redirect(url_for('admin_customers'))
+    return render_template('admin/update_customer.html', form=form, customer=customer)

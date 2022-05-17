@@ -25,7 +25,7 @@
               <td>{{ order.date.strftime('%m-%d-%Y | %I:%M:%S %p') }}</td>
               <td>${{ order.total }}</td>
               <td>${{ order.fees }}</td>
-              <td>{{ order.customer_name }}</td>
+              <td>{{ order.customer.username }}</td>
               <td>{{ order.status }}</td>
               {% if order.status == "open" %}
               <td><a href="/delivery/bid/{{order.id}}">Bid</a></td>

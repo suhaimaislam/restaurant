@@ -29,9 +29,9 @@
               <td>{{ employee.demotion }}</td>
               <td>{{ employee.promotion }}</td>
                 {% if firemessages.get(employee.id) is defined %}
-                <td><a href="/admin/employees/{{employee.id}}">Edit</a> {{ firemessages.get(employee.id) }}</td>
+                <td><a href="/admin/employees/{{employee.id}}">{{ firemessages.get(employee.id) }}</a></td>
                 {% elif messages.get(employee.id) is defined %}
-                <td><a href="/admin/employees/{{employee.id}}">Edit</a> {{ messages.get(employee.id) }}</td>
+                <td><a href="/admin/employees/{{employee.id}}">{{ messages.get(employee.id) }}</a></td>
                 {% else %}
                 <td><a href="/admin/employees/{{employee.id}}">Edit</a></td>
                 {% endif %}

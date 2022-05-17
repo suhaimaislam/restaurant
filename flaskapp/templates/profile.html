@@ -21,6 +21,21 @@
       {% endif %}
 
       <hr>
+
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-check">
+                {{ form.quit(class="form-check-input") }}
+                {{ form.quit.label(class="form-check-label") }}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+      </form>
+
+      <hr>
       
       <h3>Customer Warnings</h3>
       {% if warnings is defined and warnings.count() > 0%}

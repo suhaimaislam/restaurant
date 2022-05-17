@@ -1,0 +1,37 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+      <h2>Customer List</h2>
+      <table id="data" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Deposit</th>
+            <th>Warnings</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for customer in customerdata %}
+            <tr>
+              <td>{{ customer.username }}</td>
+              <td>{{ customer.email }}</td>
+              <td>{{ customer.status }}</td>
+              <td>{{ customer.deposit }}</td>
+              <td>{{ customer.warnings|length }}</td>
+              {% if customer.warnings|length == 3 %}
+              <td><a href="/admin/customers/{{customer.id}}">BLACKLIST CUSTOMER FOR 3 WARNINGS</a></td>
+              {% elif customer.close_account == true %}
+              <td><a href="/admin/customers/{{customer.id}}">CUSTOMER REQUEST TO DELETE ACCOUNT</a></td>
+              {% else %}
+              <td><a href="/admin/customers/{{customer.id}}">Edit</a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

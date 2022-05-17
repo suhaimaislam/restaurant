@@ -23,14 +23,17 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+        user = Customer.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('That username is taken. Please choose a different one.')
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+        user = Customer.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
+        blacklisted = Blacklist.query.filter_by(email=email.data).first()
+        if blacklisted:
+            raise ValidationError('Unable to register. Your email has been blacklisted.')
 
 # form for user to login
 class LoginForm(FlaskForm):
@@ -39,6 +42,11 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+# form for customer to quit the system
+class QuitForm(FlaskForm):
+    quit = BooleanField('Delete Account')
+    submit = SubmitField('Delete')
 
 # form for user to change address
 class AddressForm(FlaskForm):
@@ -105,9 +113,14 @@ class UpdateEmployeeForm(FlaskForm):
     active = BooleanField('Fire Employee')
     submit = SubmitField('Update')
 
+# form for manager to update customer information
+class UpdateCustomerForm(FlaskForm):
+    active = BooleanField('Blacklist Customer')
+    submit = SubmitField('Update')
+
 # form to add to cart
 class AddToCart(FlaskForm):
-    # quantity = IntegerField('Quantity', default=1, validators=[DataRequired()])
+    quantity = SelectField('Quantity', coerce=int, choices = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6,6), (7,7), (8,8), (9,9), (10,10)])
     submit = SubmitField('Add To Cart')
 
 # form to proceed to checkout
@@ -117,11 +130,11 @@ class Checkout(FlaskForm):
 
 # form to place order
 class PlaceOrder(FlaskForm):
-    submit = SubmitField('Pick Up')
+    submit = SubmitField('Place Order')
 
 # form to place order for delivery
-class PlaceDelivery(FlaskForm):
-    submit = SubmitField('Delivery')
+# class PlaceDelivery(FlaskForm):
+#     submit = SubmitField('Delivery')
 
 # form for delivery bidding
 class OrderBidForm(FlaskForm):

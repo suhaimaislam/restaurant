@@ -1,0 +1,27 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+    <div class="content-section">
+    <h2>Update Customer Information</h2>
+
+    <h4>Customer Information</h4>
+    <h6>NAME: {{ customer.username }}</h6>
+    <h6>EMAIL: {{ customer.email }}</h6>
+    <h6>STATUS: {{ customer.status }}</h6>
+    <h6>DEPOSIT: {{ customer.deposit }}</h6>
+    <h6>WARNINGS: {{ customer.warnings|length }}</h6>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-check">
+                {{ form.active(class="form-check-input") }}
+                {{ form.active.label(class="form-check-label") }}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    </div>
+{% endblock %}

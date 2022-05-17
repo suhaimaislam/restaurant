@@ -7,10 +7,10 @@
 
 {% block content %}
 
-<h2>Placing a bid on order # {{order_bid.id}} </h2>
 <!-- Form for bidding on an order -->
 
 <div class="content-section">
+    <h2>Place a bid on order # {{order_bid.id}} </h2>
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
