@@ -242,45 +242,58 @@ def cart():
 def checkout(id):
     curr = Customer.query.get(current_user.id)
     order = Order.query.get(id)
-    if order.delivery_type == "Deliver to address": # add $10 delivery fee if customer chooses delivery
-        fee = 10.0
+    if order.delivery_type == "Deliver to address" and order.status != "accepted": #<--- changed to check for accepted status
+        order.status = "pending delivery"
+        fee = 0
         order.fees = fee
+        db.session.commit()
+        flash('Your order has been placed for delivery! A delivery person will soon accept the order.', 'success')
+        return redirect(url_for('orders'))
     else:
         fee = 0
-    total = order.total + fee
     
+    total = order.total + fee 
+
     form=PlaceOrder()
     if form.validate_on_submit():
-        curr.deposit -= total
+        if order.delivery_type == "Pickup in-person":
+            order.status = "closed"
 
-        cart = curr.dishes
-        for item in cart: #reset item quantitie to 0 after order is placed
-            item.quantity = 0
-        curr.dishes = []
+        # if order.status == "pending delivery":
+        #     flash("waiting for a deliery person to accept order", 'info')
 
-        history = 0 # calculate total money spent by customer on all orders
-        for order in curr.orders:
-            history += order.total
-        
-        outstanding = True # check if customer has outstanding complaints
-        for complaint in Complaint.query.filter_by(complainee_id=current_user.id):
-            if complaint.type == 'complaint' and complaint.status != 'warning to complainee':
-                outstanding = False
-            else:
-                outstanding = True
-        for complaint in Complaint.query.filter_by(filer_id=current_user.id):
-            if complaint.type == 'complaint' and complaint.status != 'warning to filer':
-                outstanding = False
-            else:
-                outstanding = True
-        
-        # makes customer status a VIP if customer has placed more than 5 orders
-        # and either spent more than $100 or has no outstanding complaints
-        if len(curr.orders) > 5 or (history > 100 and outstanding is False):
-            curr.status = "VIP"
+        if order.status == "accepted" or order.status == "closed":
+            curr.deposit -= total
 
-        db.session.commit()
-        return redirect(url_for('orders'))
+            cart = curr.dishes
+            for item in cart: #reset item quantitie to 0 after order is placed
+                item.quantity = 0
+            curr.dishes = []
+
+            history = 0 # calculate total money spent by customer on all orders
+            for order in curr.orders:
+                history += order.total
+            
+            outstanding = True # check if customer has outstanding complaints
+            for complaint in Complaint.query.filter_by(complainee_id=current_user.id):
+                if complaint.type == 'complaint' and complaint.status != 'warning to complainee':
+                    outstanding = False
+                else:
+                    outstanding = True
+            for complaint in Complaint.query.filter_by(filer_id=current_user.id):
+                if complaint.type == 'complaint' and complaint.status != 'warning to filer':
+                    outstanding = False
+                else:
+                    outstanding = True
+            
+            # makes customer status a VIP if customer has placed more than 5 orders
+            # and either spent more than $100 or has no outstanding complaints
+            if len(curr.orders) > 5 or (history > 100 and outstanding is False):
+                curr.status = "VIP"
+            
+            order.status = "closed"
+            db.session.commit()
+            return redirect(url_for('orders'))
     return render_template('order_confirmation.html', form=form, fee=fee, total=total, new_order=order, user=current_user)
         
 
@@ -559,12 +572,6 @@ def order_bid(id):
             new_bid = Bids(order_id = order.id,customer_id = order.customer_id, bidder = current_user.id, fee = form.bid.data, customer_name = order.customer.username, new_subtotal = dec_total + form.bid.data, bidder_name = current_user.username)
             db.session.add(new_bid)
             db.session.commit()
-            print("THIS WORKED\n\n")
-            
-            #for loop to test addition of bids
-            for item in Bids.query.all():
-                cust = Customer.query.get(item.customer_id)
-                print(f'{item.id}, order: {item.order_id}, customer: {item.customer_id}, name: {cust.username} bidder: {item.bidder}, fee: {item.fee}')
             flash(f'Your bid of ${form.bid.data} for order #{order.id} is complete!', 'success')
     return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order, form = form)
 
@@ -598,8 +605,11 @@ def admin_select_bid(id):
         order = Order.query.get(ordernum)
         order.delivery_id=bid.bidder
         order.fees = new_fee
+        order.total += new_fee
+        order.status = "accepted" #<------ changed to accepted rather than closed
         db.session.commit()
         # return redirect(url_for('admin_orders'))
+        
     return render_template('/admin/bid_selected.html', bids = bid, num = ordernum)
 
 # manager handles customers 

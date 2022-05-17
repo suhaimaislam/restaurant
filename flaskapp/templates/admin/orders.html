@@ -28,7 +28,7 @@
               <td>{{ order.delivery_type }}</td>
               <td>{{ order.delivery_person.username }}</td>
               <td>{{ order.status }}</td>
-              {% if order.status == "open" %}
+              {% if order.status == "pending delivery" %}
               <td><a href="/admin/bid/{{order.id}}">Assign Bid</a></td>
               {% endif %}
             </tr>

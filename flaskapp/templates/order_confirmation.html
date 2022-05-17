@@ -8,7 +8,7 @@
 {% block content %}
 <div class="content-section">
     <h1>Checkout Order</h1>
-    <h3>Date: {{ new_order.date }}</h3>
+    <h3>Date: {{ new_order.date.strftime('%m-%d-%Y | %I:%M:%S %p') }}</h3>
     <h5>Delivery Type: {{ new_order.delivery_type }}</h5>
     <h5>Address: {{ user.address }}</h5>
     <h6>Subtotal: ${{ new_order.total }}</h6>
@@ -19,7 +19,9 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <div class="form-group">
+            {% if new_order.status != "pending delivery" %}
             {{ form.submit(class="btn btn-outline-info") }}
+            {% endif %}
         </div>
     </form>
 </div>
