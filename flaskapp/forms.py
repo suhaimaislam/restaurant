@@ -125,7 +125,7 @@ class AddToCart(FlaskForm):
 
 # form to proceed to checkout
 class Checkout(FlaskForm):
-    delivery_type = SelectField('Delivery Options', choices=[('0', '-- select an option --'), ('Pickup in-person', 'Pickup in-person'), ('Deliver to address', 'Deliver to address')], validators=[DataRequired()])
+    delivery_type = SelectField('Delivery Options', choices=[('Pickup in-person', 'Pickup in-person'), ('Deliver to address', 'Deliver to address')], validators=[DataRequired()]) #removed option 0 since it causes open orders
     submit = SubmitField('Checkout')
 
 # form to place order

@@ -242,26 +242,27 @@ def cart():
 def checkout(id):
     curr = Customer.query.get(current_user.id)
     order = Order.query.get(id)
-    if order.delivery_type == "Deliver to address": # add $10 delivery fee if customer chooses delivery
+    if order.delivery_type == "Deliver to address" and order.status != "accepted": #<--- changed to check for accepted status
         order.status = "pending delivery"
         fee = 0
         order.fees = fee
         db.session.commit()
         flash('Your order has been placed for delivery! A delivery person will soon accept the order.', 'success')
+        return redirect(url_for('orders'))
     else:
         fee = 0
-    total = order.total + fee #<----------may have to move this 
     
+    total = order.total + fee 
+
     form=PlaceOrder()
     if form.validate_on_submit():
         if order.delivery_type == "Pickup in-person":
             order.status = "closed"
 
-        if order.status == "pending delivery":
-            flash("waiting for a deliery person to accept order")
-            return redirect(url_for('orders'))
+        # if order.status == "pending delivery":
+        #     flash("waiting for a deliery person to accept order", 'info')
 
-        elif order.status == "open" or order.status == "closed":
+        if order.status == "accepted" or order.status == "closed":
             curr.deposit -= total
 
             cart = curr.dishes
@@ -289,6 +290,8 @@ def checkout(id):
             # and either spent more than $100 or has no outstanding complaints
             if len(curr.orders) > 5 or (history > 100 and outstanding is False):
                 curr.status = "VIP"
+            
+            order.status = "closed"
             db.session.commit()
             return redirect(url_for('orders'))
     return render_template('order_confirmation.html', form=form, fee=fee, total=total, new_order=order, user=current_user)
@@ -569,7 +572,6 @@ def order_bid(id):
             new_bid = Bids(order_id = order.id,customer_id = order.customer_id, bidder = current_user.id, fee = form.bid.data, customer_name = order.customer.username, new_subtotal = dec_total + form.bid.data, bidder_name = current_user.username)
             db.session.add(new_bid)
             db.session.commit()
-            print("THIS WORKED\n\n")    
             flash(f'Your bid of ${form.bid.data} for order #{order.id} is complete!', 'success')
     return render_template('/employee/delivery_bid.html', title='Add Bid', order_bid=order, form = form)
 
@@ -604,9 +606,10 @@ def admin_select_bid(id):
         order.delivery_id=bid.bidder
         order.fees = new_fee
         order.total += new_fee
-        order.status = "closed"
+        order.status = "accepted" #<------ changed to accepted rather than closed
         db.session.commit()
         # return redirect(url_for('admin_orders'))
+        
     return render_template('/admin/bid_selected.html', bids = bid, num = ordernum)
 
 # manager handles customers 
