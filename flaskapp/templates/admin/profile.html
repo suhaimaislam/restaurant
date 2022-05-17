@@ -1,13 +1,16 @@
 {% extends 'admin/navbar.html' %}
 
 {% block content %}
-    <h1>Welcome {{ user.username }}</h1>
 
-    <p>Position: {{ user.position }}</p>
-    <p>Salary: ${{ user.salary }}</p>
-    <p>Position: {{user.position}}</p>
+<div class="content-section">
 
-    {% if user.address %}
-      <p>Address: {{ user.address }}</p>
-    {% endif %}
+  <h1>Welcome {{ user.username }}</h1>
+
+  <p>Position: {{ user.position }}</p>
+  <p>Salary: ${{ user.salary }}</p>
+
+  <hr>
+
+</div>
+
 {% endblock %}

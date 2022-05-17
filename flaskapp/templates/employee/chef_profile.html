@@ -1,13 +1,29 @@
 {% extends 'employee/chef_navbar.html' %}
 
 {% block content %}
-<h1>Welcome {{ user.username }}</h1>
+<div class="content-section">
 
-<p>Position: {{ user.position }}</p>
-<p>Salary: ${{ user.salary }}</p>
-<p>Position: {{user.position}}</p>
+  <h1>Welcome {{ user.username }}</h1>
 
-{% if user.address %}
-  <p>Address: {{ user.address }}</p>
-{% endif %}
+  <p>Position: {{ user.position }}</p>
+  <p>Salary: ${{ user.salary }}</p>
+
+  {% if user.address %}
+    <hr>
+    <p>Address: {{ user.address }}</p>
+  {% endif %}
+
+  <hr>
+
+  <h3>Employee Warnings</h3>
+    {% if warnings is defined and warnings.count() > 0%}
+      {% for warning in warnings %}
+          <div class="warning-item">
+            <h6>Date: {{ warning.date_received.strftime('%m-%d-%Y | %I:%M:%S %p') }}</h6>
+            <h6>Warning: {{ warning.content }}</h6>
+          </div>
+      {% endfor %}
+    {% endif %}
+
+</div>
 {% endblock %}

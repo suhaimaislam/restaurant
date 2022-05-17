@@ -54,8 +54,8 @@ def build_sample_db():
         Complaint(id=4, content="I want my carpet back", type="complaint", complainee_id=3, filer_id=4),
         Complaint(id=5, content="The best delivery ever", type="compliment", complainee_id=4, filer_id=2),
         Complaint(id=6, content="Showed up late", type="complaint", complainee_id=2, filer_id=4),
-        Complaint(id=7, content="The best delivery ever", type="compliment", complainee_id=4, filer_id=6),
-        Complaint(id=8, content="very rude customer", type="complaint", complainee_id=6, filer_id=4)
+        Complaint(id=7, content="The best delivery ever", type="compliment", complainee_id=6, filer_id=4),
+        Complaint(id=8, content="very rude customer", type="complaint", complainee_id=4, filer_id=6)
     ]
 
     # orders = [
