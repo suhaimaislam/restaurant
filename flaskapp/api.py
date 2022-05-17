@@ -53,7 +53,7 @@ def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        address = form.street.data + " " + str(form.apt.data) + " " + form.city.data + " " \
+        address = form.street.data + " " + form.city.data + " " \
             + form.state.data + " " + str(form.zipcode.data)
         user = Customer(username=form.username.data, email=form.email.data, password=hashed_password, address=address)
         db.session.add(user)
@@ -543,7 +543,7 @@ def delivery_orders():
 @app.route("/employee/open", methods=['GET', 'POST'])
 @login_required
 def open_orders():
-    currorders = Order.query.all()
+    currorders = Order.query.filter_by(delivery_type='Deliver to address')
     return render_template('employee/deliveries.html', currorders=currorders) # make new orders.html file
 
 
