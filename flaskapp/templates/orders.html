@@ -16,6 +16,11 @@
             <h6>Delivery Type: {{ order.delivery_type }}</h6>
             <h6>Subtotal: ${{ order.total }}</h6>
             <h6>Delivery Fee: ${{ order.fees }}</h6>
+            {% if order.status == "pending delivery" %}
+              <h6>Status: {{ order.status }} <a href="/orders"></a></h6>
+            {% else %}
+              <h6>Status: ${{ order.status }}</h6>
+              {% endif %}
             {% for dish in order.dishes %}
               <a>Dish Name: {{ dish.name }}</a><br>
               <a>Dish Description: {{ dish.description }}</a><br>

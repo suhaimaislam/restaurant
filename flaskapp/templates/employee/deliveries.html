@@ -27,7 +27,7 @@
               <td>${{ order.fees }}</td>
               <td>{{ order.customer.username }}</td>
               <td>{{ order.status }}</td>
-              {% if order.status == "open" %}
+              {% if order.status == "pending delivery" %}
               <td><a href="/delivery/bid/{{order.id}}">Bid</a></td>
               {% endif %}
             </tr>
